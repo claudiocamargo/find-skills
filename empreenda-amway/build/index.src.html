@@ -218,6 +218,8 @@
     .ladder button:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; border-radius: 4px; }
     .ladder small { font-size: var(--step-small); font-weight: 500; letter-spacing: 0; color: var(--muted); }
     .pins__cta { margin-top: 40px; }
+    .sec-cta { margin-top: 40px; }
+    .ev-where { margin-top: 12px; color: var(--muted); }
     .frame-wrap { grid-column: 7 / span 6; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .frame { position: relative; width: min(40vw, 560px); aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #111; cursor: pointer; border: 0; padding: 0; }
     .frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 600ms ease; }
@@ -385,6 +387,7 @@
       .form .uf { grid-template-columns: 1fr 104px; }
 
       .foot .foot__name { position: static; margin-bottom: 32px; }
+      .mark span { font-size: var(--step-small); }
       .foot__col, .foot__col--wide { grid-column: span 6; }
       .foot__col--wide { grid-column: 1 / -1; }
     }
@@ -462,7 +465,7 @@
     <div class="wrap grid">
       <div class="ganhos__left">
         <h2 id="ganhos-t" data-reveal>ganhe de<br>duas formas</h2>
-        <p class="ganhos__note" data-reveal style="--d:1">Na revenda, você compra pelo preço de empresário e revende pelo preço sugerido, até 43% acima. Na equipe, recebe bônus por quem você convida e desenvolve. Simule a revenda:</p>
+        <p class="ganhos__note" data-reveal style="--d:1">Revendendo produtos de alta qualidade com 43% de margem de lucro, e convidando amigos e clientes para construir um time de empresários que também revende, com bônus pela equipe. Simule a revenda:</p>
         <form class="sim" id="sim" data-reveal style="--d:2" onsubmit="return false">
           <div>
             <label for="s-cli">clientes por mês <output id="o-cli" for="s-cli">15</output></label>
@@ -476,6 +479,7 @@
         <div class="total" data-reveal style="--d:3">
           <span class="total__fig" id="t-fig"><small>R$</small>677</span>
           <p>de lucro estimado por mês só com a revenda, antes dos bônus de equipe.</p>
+          <p class="sec-cta"><a class="btn btn--light" href="https://wa.me/5519991829137?text=Ol%C3%A1!%20Quero%20conhecer%20o%20plano%20de%20ganhos%20da%20Amway." target="_blank" rel="noopener">quero conhecer o plano de ganhos</a></p>
         </div>
       </div>
       <div class="slip" data-reveal style="--d:2" aria-live="polite">
@@ -514,10 +518,11 @@
           <li class="pt" data-reveal style="--d:1"><h3><span class="dot"></span>Reconhecimento</h3><p>Cada conquista é celebrada, com prêmios, pins e cerimônias.</p></li>
           <li class="pt" data-reveal style="--d:2"><h3><span class="dot"></span>Bônus e viagens</h3><p>Além do lucro: bônus de equipe, eventos e viagens de recompensa.</p></li>
           <li class="pt" data-reveal><h3><span class="dot"></span>Garantia de 100%</h3><p>Os produtos têm Garantia de Satisfação de 100%. Indique sem medo.</p></li>
-          <li class="pt" data-reveal style="--d:1"><h3><span class="dot"></span>Vontade não falta</h3><p>60% dos brasileiros querem empreender, acima da média global de 49%.</p></li>
+          <li class="pt" data-reveal style="--d:1"><h3><span class="dot"></span>Vontade não falta</h3><p>60% dos brasileiros querem empreender, acima da média global de 49%. Falta capital e capacitação.</p></li>
           <li class="pt" data-reveal style="--d:2"><h3><span class="dot"></span>Jovens na frente</h3><p>74% dos jovens de até 35 anos querem abrir o próprio negócio.</p></li>
         </ul>
         <p class="points__src small">Percentuais: Amway Global Entrepreneurship Report (AGER) 2018, citado pela Amway Brasil.</p>
+        <p class="sec-cta"><a class="btn" href="https://wa.me/5519991829137?text=Ol%C3%A1!%20Quero%20come%C3%A7ar%20uma%20renda%20extra%20com%20a%20Amway." target="_blank" rel="noopener">quero começar minha renda extra</a></p>
       </div>
     </div>
   </section>
@@ -540,7 +545,7 @@
         <svg class="diagram__svg diagram__svg--tall" viewBox="0 0 300 400" data-w="300" data-h="400" data-v="1" aria-hidden="true"></svg>
         <div class="stages">
           <div class="stage" data-reveal><h3>comece</h3><p>Você chega com dúvidas, como todo mundo. O treinamento começa no primeiro dia, no seu tempo.</p></div>
-          <div class="stage" data-reveal style="--d:1"><h3>aprenda no INA</h3><p>Instituto de Negócios Amway: plataforma online totalmente gratuita.</p>
+          <div class="stage" data-reveal style="--d:1"><h3>aprenda no INA</h3><p>O Instituto de Negócios Amway desenvolve os treinamentos de produtos, vendas, liderança, desenvolvimento pessoal e do Plano de Negócios.</p>
             <ul class="small">
               <li><span class="dot"></span>Como falar dos produtos com confiança</li>
               <li><span class="dot"></span>Primeiros passos e como aumentar o seu time</li>
@@ -549,7 +554,7 @@
               <li><span class="dot"></span>O Plano de Negócios, passo a passo</li>
             </ul>
           </div>
-          <div class="stage" data-reveal style="--d:2"><h3>lidere</h3><p>Amway Academy: treinamento na palma da mão, no celular ou tablet.</p>
+          <div class="stage" data-reveal style="--d:2"><h3>lidere</h3><p>Amway Academy: plataforma on-line totalmente gratuita para Empresários Amway, com centenas de conteúdos no celular. Ao chegar a Platina, o Seminário de Novos Platinas.</p>
             <ul class="small">
               <li><span class="dot"></span>Vídeos e áudios de treinamento</li>
               <li><span class="dot"></span>Materiais para download</li>
@@ -558,6 +563,7 @@
           </div>
         </div>
       </div>
+      <p class="sec-cta" data-reveal><a class="btn" href="https://wa.me/5519991829137?text=Ol%C3%A1!%20Quero%20conhecer%20os%20treinamentos%20e%20a%20capacita%C3%A7%C3%A3o%20da%20Amway." target="_blank" rel="noopener">quero conhecer os treinamentos</a></p>
     </div>
   </section>
 
@@ -565,13 +571,14 @@
     <div class="wrap grid">
       <div class="pins__text">
         <h2 id="pins-t" data-reveal>cada conquista, um pin</h2>
-        <p data-reveal style="--d:1">Na Amway, cada qualificação é simbolizada por um pin. À medida que você se qualifica, seus ganhos aumentam e chegam prêmios, viagens e experiências exclusivas.</p>
+        <p data-reveal style="--d:1">Na Amway, cada qualificação é simbolizada por um pin, de Prata a Diamante, com versões Fundador em vários níveis. À medida que você se qualifica, seus ganhos aumentam e chegam prêmios, viagens e recompensas extras.</p>
         <div class="ladder" role="group" aria-label="Níveis de qualificação" data-reveal style="--d:2">
           <button type="button" aria-pressed="true" data-i="0"><span class="dot"></span>prata <small>o começo</small></button>
           <button type="button" aria-pressed="false" data-i="1"><span class="dot"></span>ouro</button>
           <button type="button" aria-pressed="false" data-i="2"><span class="dot"></span>platina <small>primeiro nível de liderança</small></button>
-          <button type="button" aria-pressed="false" data-i="3"><span class="dot"></span>esmeralda</button>
-          <button type="button" aria-pressed="false" data-i="4"><span class="dot"></span>diamante <small>Diamond Club</small></button>
+          <button type="button" aria-pressed="false" data-i="3"><span class="dot"></span>safira</button>
+          <button type="button" aria-pressed="false" data-i="4"><span class="dot"></span>esmeralda</button>
+          <button type="button" aria-pressed="false" data-i="5"><span class="dot"></span>diamante <small>Diamond Club</small></button>
         </div>
         <p class="pins__cta" data-reveal style="--d:3"><a class="btn" href="https://wa.me/5519991829137?text=Ol%C3%A1!%20Quero%20conhecer%20o%20plano%20de%20reconhecimento%20da%20Amway." target="_blank" rel="noopener">quero conhecer o plano</a></p>
       </div>
@@ -580,6 +587,7 @@
           <img class="is-on" src="img/prata.webp" width="768" height="768" alt="Filamentos de prata nativa" loading="lazy" data-cap="Prata: filamentos de prata nativa.">
           <img src="img/ouro.webp" width="900" height="900" alt="Pepita de ouro" loading="lazy" data-cap="Ouro: pepita de ouro de aluvião, Colorado (EUA).">
           <img src="img/platina.webp" width="900" height="900" alt="Pepita de platina" loading="lazy" data-cap="Platina: réplica de uma grande pepita dos Montes Urais.">
+          <img src="img/safira.webp" width="900" height="900" alt="Cristal bruto de safira azul" loading="lazy" data-cap="Safira: cristal bruto, Ratnapura (Sri Lanka).">
           <img src="img/esmeralda.webp" width="900" height="900" alt="Cristal de esmeralda na rocha" loading="lazy" data-cap="Esmeralda: cristal na rocha, mina de Muzo (Colômbia).">
           <img src="img/diamante.webp" width="900" height="900" alt="Cristal de diamante bruto e diamantes lapidados" loading="lazy" data-cap="Diamante: cristal bruto e pedras lapidadas, Smithsonian.">
         </button>
@@ -596,7 +604,7 @@
       <div class="plate__text">
         <div>
           <h2 id="ev-t" data-reveal>eventos e viagens</h2>
-          <p class="plate__intro" data-reveal style="--d:1">Convenções com os lançamentos da marca e viagens nacionais e internacionais exclusivas, com tudo pago.</p>
+          <p class="plate__intro" data-reveal style="--d:1">Convenções com os lançamentos da marca, viagens nacionais e internacionais exclusivas e passeios VIP com tudo pago, além de presentes personalizados.</p>
         </div>
         <div data-reveal style="--d:2">
           <div class="tabs" role="tablist" aria-label="Eventos">
@@ -606,7 +614,8 @@
           </div>
           <div class="tabpanel" id="ev-panel" role="tabpanel" aria-labelledby="tab-0" style="margin-top:32px">
             <h3 id="ev-title">seminário de novos platinas</h3>
-            <p id="ev-text">A celebração de quem alcança o primeiro nível de liderança.</p>
+            <p id="ev-text">A conquista do primeiro nível de liderança é comemorada em grande estilo: os Novos Platinas celebram, aprendem e compartilham as próximas conquistas.</p>
+            <p class="ev-where small" id="ev-where">Edição 2024–2025: Fazenda Nutrilite, Ubajara (CE).</p>
           </div>
         </div>
         <div class="cells" data-reveal style="--d:3">
@@ -670,8 +679,8 @@
   <div class="wrap">
     <div class="mark-wrap">
     <h2 class="foot__name" id="foot-t">empreenda<br>amway</h2>
-    <div class="mark" aria-label="Os pins: prata, ouro, platina, esmeralda, diamante" role="img">
-      <span style="--s:1">prata</span><span style="--s:1.25">ouro</span><span style="--s:1.55">platina</span><span style="--s:1.9">esmeralda</span><span style="--s:2.35">diamante</span>
+    <div class="mark" aria-label="Os pins: prata, ouro, platina, safira, esmeralda, diamante" role="img">
+      <span style="--s:1">prata</span><span style="--s:1.2">ouro</span><span style="--s:1.45">platina</span><span style="--s:1.7">safira</span><span style="--s:2">esmeralda</span><span style="--s:2.35">diamante</span>
     </div>
     </div>
     <div class="foot__cols">
@@ -686,7 +695,7 @@
       <div class="foot__col--wide">
         <h2>avisos</h2>
         <p>Página de recrutamento de empreendedor independente Amway. Conteúdo baseado nas páginas oficiais da Amway Brasil. Resultados individuais variam conforme a dedicação de cada empreendedor. Para participar é preciso ter 18 anos ou mais.</p>
-        <p>Fotos via Wikimedia Commons, recortadas: prata, Robert M. Lavinsky (<a class="link" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>); ouro e platina, James St. John (<a class="link" href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>); esmeralda, Didier Descouens (<a class="link" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>); diamante, Smithsonian Institution (domínio público); acerola, Forest e Kim Starr (<a class="link" href="https://creativecommons.org/licenses/by/3.0/us/">CC BY 3.0 US</a>); sede da Amway, Larry Pieniazek (<a class="link" href="https://creativecommons.org/licenses/by/2.5/">CC BY 2.5</a>); moeda, Banco Central do Brasil (domínio público); voo sobre as nuvens, L. Shyamal (CC0). <a class="link" href="credits.html">Fontes de cada imagem</a>.</p>
+        <p>Fotos via Wikimedia Commons, recortadas: prata, Robert M. Lavinsky (<a class="link" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>); ouro, platina e safira, James St. John (<a class="link" href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>); esmeralda, Didier Descouens (<a class="link" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>); diamante, Smithsonian Institution (domínio público); acerola, Forest e Kim Starr (<a class="link" href="https://creativecommons.org/licenses/by/3.0/us/">CC BY 3.0 US</a>); sede da Amway, Larry Pieniazek (<a class="link" href="https://creativecommons.org/licenses/by/2.5/">CC BY 2.5</a>); moeda, Banco Central do Brasil (domínio público); voo sobre as nuvens, L. Shyamal (CC0). <a class="link" href="credits.html">Fontes de cada imagem</a>.</p>
       </div>
     </div>
     <div class="foot__last">
@@ -792,9 +801,9 @@
 
   /* Event tabs. */
   var events = [
-    ["seminário de novos platinas", "A celebração de quem alcança o primeiro nível de liderança."],
-    ["seminário de liderança", "Treinamento e inspiração em destinos incríveis, ao lado dos maiores líderes do negócio."],
-    ["diamond club", "Viagens internacionais luxuosas reservadas aos líderes Diamante."]
+    ["seminário de novos platinas", "A conquista do primeiro nível de liderança é comemorada em grande estilo: os Novos Platinas celebram, aprendem e compartilham as próximas conquistas.", "Edição 2024–2025: Fazenda Nutrilite, Ubajara (CE)."],
+    ["seminário de liderança", "Treinamento e inspiração em destinos incríveis, ao lado dos maiores líderes do negócio.", "Edição 2025: Punta del Este (Uruguai)."],
+    ["diamond club", "Viagens internacionais luxuosas para os líderes Diamante, que inspiram e apoiam o seu grupo durante o ano todo.", "Edição 2025: África do Sul."]
   ];
   var tabs = document.querySelectorAll('[role="tab"]');
   function selectTab(i, focus) {
@@ -805,6 +814,7 @@
     $("ev-panel").setAttribute("aria-labelledby", "tab-" + i);
     $("ev-title").textContent = events[i][0];
     $("ev-text").textContent = events[i][1];
+    $("ev-where").textContent = events[i][2];
     if (focus) tabs[i].focus();
   }
   tabs.forEach(function (t, k) {
