@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Empreenda com a Amway · Claudio Camargo</title>
+  <meta name="description" content="Seja um empreendedor Amway: renda extra ou negócio próprio com baixo investimento, lucro de até 43% na revenda, capacitação gratuita, reconhecimento e viagens. Cadastre-se e fale comigo no WhatsApp.">
+  <meta name="theme-color" content="#7d0c14">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%237d0c14'/%3E%3C/svg%3E">
+  <link rel="preload" href="fonts/pilcrow-2.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/pilcrow-0.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    @font-face { font-family: "Pilcrow Rounded"; src: url("fonts/pilcrow-0.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+    @font-face { font-family: "Pilcrow Rounded"; src: url("fonts/pilcrow-1.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+    @font-face { font-family: "Pilcrow Rounded"; src: url("fonts/pilcrow-2.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+
+    :root {
+      --bg: #e2e2e2;
+      --surface: #d6d6d6;
+      --paper: #f1f0ef;
+      --ink: #7d0c14;
+      --muted: #7a4a4e;
+      --accent: #7d0c14;
+      --accent-strong: #5c070d;
+      --accent-ink: #e2e2e2;
+      --field-1: #7d0c14;
+      --field-1-ink: #e2e2e2;
+      --field-1-soft: #e6c7c9;
+      --field-1-tone: #932a32;
+      --dot-2: #a8545b;
+      --dot-3: #c58d92;
+
+      --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+      --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+      --step-lead: clamp(1.5rem, 0.9rem + 1.5vw, 2.25rem);
+      --step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+      --step-display: clamp(2.75rem, 1rem + 6vw, 6.25rem);
+
+      --margin: clamp(16px, 3vw, 40px);
+      --gap: clamp(16px, 2vw, 32px);
+      --section: clamp(112px, 12vw, 200px);
+
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+      --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+      --t-press: 140ms;
+      --t-hover: 180ms;
+      --t-ui: 240ms;
+      --t-reveal: 800ms;
+      --stagger-item: 70ms;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: "Pilcrow Rounded", "Nunito", system-ui, sans-serif;
+      font-size: var(--step-body); line-height: 1.5; font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; padding: 0; }
+    ul, ol { list-style: none; }
+    img, svg, video { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+    ::selection { background: var(--ink); color: var(--bg); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+    .display, h1, h2 { font-weight: 700; letter-spacing: -0.045em; line-height: 0.92; text-transform: lowercase; text-wrap: balance; }
+    h2 { font-size: var(--step-head); }
+    h3 { font-weight: 500; font-size: var(--step-body); line-height: 1.3; }
+    .lead { font-size: var(--step-lead); line-height: 1.18; font-weight: 500; letter-spacing: -0.02em; }
+    .small { font-size: var(--step-small); }
+    .muted { color: var(--muted); }
+
+    .wrap { width: 100%; max-width: 1440px; margin-inline: auto; padding-inline: var(--margin); }
+    .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); }
+
+    /* One button shape: the pin. Fully round. */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.55em;
+      min-height: 56px; padding: 0 1.6em; border-radius: 999px; border: 0; cursor: pointer;
+      background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: var(--step-body);
+      text-decoration: none; text-transform: lowercase; letter-spacing: -0.01em;
+      transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease, color var(--t-hover) ease;
+    }
+    .btn::before { content: ""; width: 0.55em; height: 0.55em; border-radius: 50%; background: currentColor; flex: none; transition: transform var(--t-ui) var(--ease-out); }
+    .btn:active { transform: scale(0.97); }
+    .btn--light { background: var(--accent-ink); color: var(--accent); }
+    .link { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 0.2em; text-decoration-thickness: 0.07em; transition: text-decoration-color var(--t-hover) ease, color var(--t-hover) ease; }
+    @media (hover: hover) and (pointer: fine) {
+      .btn:hover { background: var(--accent-strong); }
+      .btn--light:hover { background: #ffffff; }
+      .btn:hover::before { transform: scale(1.5); }
+      .link:hover { text-decoration-color: currentColor; }
+    }
+    .dot { display: inline-block; width: 0.7em; height: 0.7em; border-radius: 50%; background: currentColor; flex: none; }
+
+    /* ---------- hero ---------- */
+    .hero { position: relative; min-height: max(100svh, 640px); overflow: hidden; display: flex; flex-direction: column; }
+    .hero__disc {
+      position: absolute; z-index: 0; width: 120vh; height: 120vh; border-radius: 50%;
+      background: var(--accent); left: calc(78vw - 60vh); top: calc(55% - 60vh);
+    }
+    .bar { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 24px; }
+    .wordmark { font-weight: 700; font-size: var(--step-lead); letter-spacing: -0.05em; text-decoration: none; text-transform: lowercase; line-height: 1; }
+    .bar__links { display: flex; gap: clamp(16px, 2vw, 32px); color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 8px 4px; font-weight: 500; }
+    .bar__links a { text-decoration: none; text-transform: lowercase; }
+    .bar__short { display: none; }
+    .hero__body { position: relative; z-index: 1; flex: 1; display: flex; align-items: center; padding-bottom: 64px; }
+    .hero__text { max-width: min(46vw, 640px); }
+    .hero h1 { font-size: var(--step-display); }
+    .hero h1 .ln { display: block; white-space: nowrap; }
+    .hero__sub { margin-top: 40px; max-width: 34ch; }
+    .hero__actions { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
+    .hero__pin {
+      position: absolute; z-index: 1; right: calc(var(--margin) + 6vw); top: 50%; transform: translateY(-50%);
+      width: clamp(200px, 21vw, 320px); color: var(--accent-ink); text-align: center;
+    }
+    .hero__pin img { width: 100%; aspect-ratio: 1; border-radius: 50%; object-fit: cover; background: var(--paper); }
+    .hero__pin figcaption { margin-top: 16px; font-size: var(--step-small); line-height: 1.35; }
+    .hero__pin b { display: block; font-size: var(--step-body); font-weight: 700; letter-spacing: -0.02em; }
+
+    /* ---------- intro statement ---------- */
+    .intro { padding-block: 120px clamp(120px, 18vh, 200px); }
+    .intro__text { max-width: 36ch; margin-inline: auto; text-align: center; font-size: var(--step-lead); }
+    .intro__text .f { display: inline-block; height: 0.85em; width: 1.15em; border-radius: 999px; overflow: hidden; vertical-align: -0.1em; margin-inline: 0.12em; background: var(--surface); }
+    .intro__text .f img { width: 100%; height: 100%; object-fit: cover; }
+    .intro__note { margin-top: 40px; text-align: center; color: var(--muted); }
+
+    /* ---------- ganhos: total and its receipt ---------- */
+    .field { background: var(--field-1); color: var(--field-1-ink); }
+    .ganhos { padding-block: var(--section); }
+    .ganhos__left { grid-column: 1 / span 6; display: flex; flex-direction: column; min-height: 100%; }
+    .ganhos__note { margin-top: 24px; max-width: 40ch; }
+    .sim { margin-top: 56px; display: grid; gap: 28px; max-width: 520px; }
+    .sim label { display: flex; justify-content: space-between; gap: 16px; font-weight: 500; }
+    .sim output { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .range { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; background: transparent; margin: 6px 0 0; cursor: pointer; }
+    .range::-webkit-slider-runnable-track { height: 10px; border-radius: 999px; background: var(--field-1-tone); }
+    .range::-moz-range-track { height: 10px; border-radius: 999px; background: var(--field-1-tone); }
+    .range::-webkit-slider-thumb { -webkit-appearance: none; width: 32px; height: 32px; margin-top: -11px; border-radius: 50%; background: var(--field-1-ink); border: 0; transition: transform var(--t-press) var(--ease-out); }
+    .range::-moz-range-thumb { width: 32px; height: 32px; border-radius: 50%; background: var(--field-1-ink); border: 0; }
+    .range:active::-webkit-slider-thumb { transform: scale(1.15); }
+    .range:focus-visible { outline: 3px solid var(--field-1-ink); outline-offset: 2px; border-radius: 8px; }
+    .total { margin-top: auto; padding-top: 128px; }
+    .total__fig { display: block; font-weight: 700; font-size: var(--step-display); letter-spacing: -0.05em; line-height: 0.85; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .total__fig small { font-size: var(--step-lead); letter-spacing: -0.02em; vertical-align: 0.95em; margin-right: 0.1em; }
+    .total p { margin-top: 20px; max-width: 34ch; }
+    .slip {
+      grid-column: 8 / span 4; align-self: start; background: var(--paper); color: var(--ink);
+      padding: 36px 32px 56px; font-size: var(--step-body); font-variant-numeric: tabular-nums;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), 98.214% 100%, 96.429% calc(100% - 12px), 94.643% 100%, 92.857% calc(100% - 12px), 91.071% 100%, 89.286% calc(100% - 12px), 87.500% 100%, 85.714% calc(100% - 12px), 83.929% 100%, 82.143% calc(100% - 12px), 80.357% 100%, 78.571% calc(100% - 12px), 76.786% 100%, 75.000% calc(100% - 12px), 73.214% 100%, 71.429% calc(100% - 12px), 69.643% 100%, 67.857% calc(100% - 12px), 66.071% 100%, 64.286% calc(100% - 12px), 62.500% 100%, 60.714% calc(100% - 12px), 58.929% 100%, 57.143% calc(100% - 12px), 55.357% 100%, 53.571% calc(100% - 12px), 51.786% 100%, 50.000% calc(100% - 12px), 48.214% 100%, 46.429% calc(100% - 12px), 44.643% 100%, 42.857% calc(100% - 12px), 41.071% 100%, 39.286% calc(100% - 12px), 37.500% 100%, 35.714% calc(100% - 12px), 33.929% 100%, 32.143% calc(100% - 12px), 30.357% 100%, 28.571% calc(100% - 12px), 26.786% 100%, 25.000% calc(100% - 12px), 23.214% 100%, 21.429% calc(100% - 12px), 19.643% 100%, 17.857% calc(100% - 12px), 16.071% 100%, 14.286% calc(100% - 12px), 12.500% 100%, 10.714% calc(100% - 12px), 8.929% 100%, 7.143% calc(100% - 12px), 5.357% 100%, 3.571% calc(100% - 12px), 1.786% 100%, 0.000% calc(100% - 12px));
+    }
+    .slip h3 { font-weight: 700; margin-top: 24px; }
+    .slip h3:first-child { margin-top: 0; }
+    .slip__title { font-weight: 700; font-size: var(--step-lead); letter-spacing: -0.03em; line-height: 1; text-transform: lowercase; margin-bottom: 28px; }
+    .row { display: flex; align-items: baseline; gap: 8px; margin-top: 8px; }
+    .row__lead { flex: 1; min-width: 16px; height: 4px; align-self: baseline; transform: translateY(-0.2em);
+      border-bottom: 4px dotted var(--dot-3); }
+    .row__v { text-align: right; white-space: nowrap; font-weight: 500; }
+    .row--total { margin: 28px -32px 0; padding: 18px 32px; background: var(--ink); color: var(--paper); font-weight: 700; }
+    .row--total .row__lead { border-color: var(--dot-2); }
+    .slip__fine { margin-top: 20px; color: var(--muted); }
+
+    /* ---------- renda extra: shape-marked points ---------- */
+    .points { padding-block: var(--section); overflow: hidden; }
+    .points__photo { grid-column: 1 / span 5; position: relative; margin-left: calc(-1 * var(--margin) - 6vw); }
+    .points__photo .circle { width: min(78svh, 46vw); aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: var(--surface); }
+    .points__photo img { width: 100%; height: 100%; object-fit: cover; }
+    .points__photo figcaption { margin: 20px 0 0 calc(var(--margin) + 6vw); color: var(--muted); max-width: 30ch; }
+    .points__body { grid-column: 7 / span 6; align-self: center; }
+    .points__body h2 { max-width: 10ch; }
+    .points__grid { margin-top: 56px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 44px 40px; }
+    .pt h3 { display: flex; align-items: baseline; gap: 0.5em; }
+    .pt h3 .dot { width: 0.7em; height: 0.7em; transform: translateY(0.05em); }
+    .pt:nth-child(3n+1) .dot { color: var(--ink); }
+    .pt:nth-child(3n+2) .dot { color: var(--dot-2); }
+    .pt:nth-child(3n+3) .dot { color: var(--dot-3); }
+    .pt p { margin-top: 6px; line-height: 1.45; }
+    .points__src { margin-top: 48px; color: var(--muted); max-width: 60ch; }
+
+    /* ---------- capacitação: many into one ---------- */
+    .train { padding-block: var(--section); background: var(--surface); }
+    .train__head { grid-column: 1 / span 5; }
+    .train__head p { margin-top: 24px; max-width: 40ch; }
+    .train__nums { grid-column: 7 / span 6; align-self: end; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap); }
+    .train__nums b { display: block; font-size: var(--step-head); letter-spacing: -0.05em; line-height: 0.9; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .train__nums span { display: block; margin-top: 10px; color: var(--muted); line-height: 1.35; }
+    .diagram { margin-top: 72px; }
+    .diagram__svg--tall { display: none; }
+    .diagram__svg circle { fill: var(--accent); }
+    .diagram__svg .p1 { fill: var(--dot-3); }
+    .diagram__svg .p2 { fill: #b9a3a5; }
+    .diagram__svg .m { fill: var(--dot-2); }
+    .stages { margin-top: 48px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
+    .stage h3 { font-weight: 700; letter-spacing: -0.02em; text-transform: lowercase; }
+    .stage p { margin-top: 8px; max-width: 36ch; }
+    .stage ul { margin-top: 16px; display: grid; gap: 8px; }
+    .stage li { display: flex; gap: 0.6em; align-items: baseline; max-width: 36ch; }
+    .stage li .dot { width: 0.5em; height: 0.5em; color: var(--accent); }
+
+    /* ---------- reconhecimento: one frame, contents change ---------- */
+    .pins { padding-block: var(--section); }
+    .pins__text { grid-column: 1 / span 5; align-self: center; }
+    .pins__text p { margin-top: 24px; max-width: 40ch; }
+    .ladder { margin-top: 40px; display: grid; gap: 4px; }
+    .ladder button {
+      all: unset; cursor: pointer; display: flex; align-items: center; gap: 16px; padding: 6px 0;
+      font-size: var(--step-lead); font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; text-transform: lowercase; color: var(--muted);
+      transition: color var(--t-hover) ease;
+    }
+    .ladder button .dot { width: 0.42em; height: 0.42em; transform: scale(0.6); transition: transform var(--t-ui) var(--ease-out); }
+    .ladder button[aria-pressed="true"] { color: var(--ink); }
+    .ladder button[aria-pressed="true"] .dot { transform: scale(1); }
+    .ladder button:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; border-radius: 4px; }
+    .ladder small { font-size: var(--step-small); font-weight: 500; letter-spacing: 0; color: var(--muted); }
+    .pins__cta { margin-top: 40px; }
+    .frame-wrap { grid-column: 7 / span 6; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .frame { position: relative; width: min(40vw, 560px); aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #111; cursor: pointer; border: 0; padding: 0; }
+    .frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 600ms ease; }
+    .frame img.is-on { opacity: 1; }
+    .frame-cap { margin-top: 20px; font-size: var(--step-small); color: var(--muted); text-align: center; min-height: 2.8em; max-width: 44ch; }
+
+    /* ---------- eventos: square plate, spare text ---------- */
+    .plate { background: var(--surface); }
+    .plate__in { display: grid; grid-template-columns: 1fr 1fr; min-height: 88svh; }
+    .plate__pic { display: flex; align-items: center; justify-content: center; padding: 40px; }
+    .shutter { width: min(100%, 76svh); aspect-ratio: 1; border-radius: 50%; overflow: hidden; }
+    .shutter video, .shutter img { width: 100%; height: 100%; object-fit: cover; }
+    .plate__text { display: flex; flex-direction: column; justify-content: space-between; gap: 48px; padding: var(--section) var(--margin) 64px 40px; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+    .tabs button { all: unset; cursor: pointer; font-size: var(--step-body); font-weight: 500; color: var(--muted); text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 0.3em; text-decoration-thickness: 3px; transition: color var(--t-hover) ease, text-decoration-color var(--t-hover) ease; }
+    .tabs button[aria-selected="true"] { color: var(--ink); text-decoration-color: currentColor; font-weight: 700; }
+    .tabs button:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; border-radius: 4px; }
+    .plate__text h2 { max-width: 9ch; }
+    .plate__intro { margin-top: 24px; max-width: 40ch; }
+    .tabpanel h3 { font-size: var(--step-lead); font-weight: 700; letter-spacing: -0.04em; line-height: 1; text-transform: lowercase; }
+    .tabpanel p { margin-top: 20px; max-width: 34ch; }
+    .cells { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .cells a { display: flex; align-items: center; justify-content: center; gap: 0.5em; min-height: 72px; border-radius: 999px; font-weight: 700; text-decoration: none; text-transform: lowercase; transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease; }
+    .cells a:active { transform: scale(0.97); }
+    .cells a:first-child { background: var(--ink); color: var(--paper); }
+    .cells a:last-child { background: var(--bg); color: var(--ink); }
+    @media (hover: hover) and (pointer: fine) {
+      .cells a:first-child:hover { background: var(--accent-strong); }
+      .cells a:last-child:hover { background: var(--paper); }
+    }
+
+    /* ---------- cadastro: the coupon ---------- */
+    .signup { padding-block: var(--section) 120px; }
+    .coupon {
+      position: relative; display: grid; grid-template-columns: 46fr 54fr; background: var(--field-1); color: var(--field-1-ink);
+      border-radius: 28px; margin-inline: clamp(0px, 4vw, 96px);
+    }
+    .coupon::before, .coupon::after { content: ""; position: absolute; left: 46%; width: 44px; height: 44px; border-radius: 50%; background: var(--bg); transform: translateX(-50%); }
+    .coupon::before { top: -22px; }
+    .coupon::after { bottom: -22px; }
+    .coupon__left { position: relative; padding: clamp(32px, 4vw, 56px); display: flex; flex-direction: column; gap: 40px; }
+    .coupon__left::after { content: ""; position: absolute; right: -3px; top: 40px; bottom: 40px; border-right: 6px dotted var(--bg); }
+    .coupon h2 { font-size: var(--step-head); }
+    .coupon__me { display: flex; align-items: center; gap: 20px; }
+    .coupon__me img { width: 104px; height: 104px; border-radius: 50%; object-fit: cover; background: var(--paper); flex: none; }
+    .coupon__me p { line-height: 1.35; }
+    .coupon__me b { display: block; font-weight: 700; }
+    .coupon__me a { color: var(--field-1-ink); }
+    .steps { display: grid; gap: 14px; }
+    .steps li { display: flex; gap: 14px; align-items: baseline; }
+    .steps .dot { width: 0.6em; height: 0.6em; color: var(--field-1-soft); }
+    .steps b { font-weight: 700; }
+    .form { padding: clamp(32px, 4vw, 56px); display: grid; gap: 10px; align-content: start; }
+    .form .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form .uf { grid-template-columns: 1fr 120px; }
+    .in {
+      width: 100%; min-height: 54px; border: 0; border-radius: 14px; padding: 14px 18px; background: var(--field-1-tone); color: var(--field-1-ink);
+      font-size: var(--step-body); outline: none; transition: background-color var(--t-hover) ease;
+    }
+    .in::placeholder { color: var(--field-1-soft); opacity: 1; }
+    .in:focus-visible { background: #a33a42; outline: 3px solid var(--field-1-ink); outline-offset: 2px; }
+    select.in { appearance: none; cursor: pointer; }
+    select.in:invalid { color: var(--field-1-soft); }
+    select.in option { color: #1a1a1a; background: #fff; }
+    textarea.in { min-height: 96px; resize: vertical; }
+    .consent { display: flex; gap: 12px; align-items: flex-start; margin-top: 6px; line-height: 1.4; cursor: pointer; }
+    .consent input { width: 24px; height: 24px; flex: none; margin: 0; accent-color: var(--field-1-ink); }
+    .submit { margin-top: 8px; min-height: 60px; width: 100%; border: 0; border-radius: 999px; background: #3e0509; color: var(--paper); font-weight: 700; cursor: pointer; text-transform: lowercase; display: flex; align-items: center; justify-content: center; gap: 0.55em; transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease; }
+    .submit:active { transform: scale(0.98); }
+    @media (hover: hover) and (pointer: fine) { .submit:hover { background: #260306; } }
+    .form-error { display: none; background: var(--paper); color: var(--ink); border-radius: 14px; padding: 14px 18px; font-weight: 500; }
+    .form-error.show { display: block; }
+    .form-fine { color: var(--field-1-soft); }
+    .sim-line { color: var(--field-1-soft); }
+    .form-ok { display: none; padding-block: 24px; }
+    .form-ok.show { display: block; }
+    .form-ok h3 { font-size: var(--step-lead); font-weight: 700; letter-spacing: -0.03em; }
+    .form-ok p { margin: 12px 0 28px; max-width: 36ch; }
+
+    /* ---------- footer: the ladder, built large ---------- */
+    .foot { padding-block: 64px 120px; }
+    .mark-wrap { position: relative; }
+    .foot .foot__name { position: absolute; left: 0; top: 0; margin: 0; font-size: var(--step-head); line-height: 0.92; letter-spacing: -0.045em; }
+    .mark { display: flex; align-items: flex-end; gap: 4px; }
+    .mark span { flex: var(--s) 1 0; aspect-ratio: 1; border-radius: 50%; background: var(--field-1-ink); color: var(--ink); display: flex; align-items: center; justify-content: center; font-weight: 700; letter-spacing: -0.04em; font-size: var(--step-body); text-transform: lowercase; }
+    .foot__cols { margin-top: 56px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 32px var(--gap); }
+    .foot__col { grid-column: span 3; }
+    .foot__col--wide { grid-column: span 6; }
+    .foot h2 { font-size: var(--step-body); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 14px; }
+    .foot li { margin-top: 6px; }
+    .foot a { color: var(--field-1-ink); }
+    .foot p { font-size: var(--step-small); line-height: 1.5; color: var(--field-1-soft); max-width: 75ch; }
+    .foot .btn--light { color: var(--accent); }
+    .foot p + p { margin-top: 12px; }
+    .foot__last { margin-top: 56px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .foot__last .btn { min-height: 48px; }
+
+    .wa-float {
+      position: fixed; right: 16px; bottom: 16px; z-index: 50; width: 60px; height: 60px; border-radius: 50%;
+      background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; text-decoration: none;
+      box-shadow: 0 10px 28px rgba(60, 5, 9, 0.35); /* taste-skill-ignore: fixed button floating over content */
+      transition: transform var(--t-press) var(--ease-out), opacity var(--t-ui) ease;
+    }
+    .wa-float:active { transform: scale(0.94); }
+    .wa-float.is-hidden { opacity: 0; transform: scale(0.6); pointer-events: none; }
+
+    /* ---------- tablet and phone ---------- */
+    @media (max-width: 1100px) {
+      .points__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .pt:nth-child(n) .dot { color: var(--ink); }
+      .pt:nth-child(2n) .dot { color: var(--dot-2); }
+    }
+    @media (max-width: 899px) {
+      .bar__links { display: none; }
+      .bar__short { display: inline; font-weight: 700; text-transform: lowercase; text-decoration: none; }
+      .hero { min-height: max(100svh, 680px); }
+      .hero__disc { width: 130vw; height: 130vw; left: -15vw; top: 56%; }
+      .hero__body { align-items: flex-start; padding-top: 6vh; }
+      .hero__text { max-width: none; }
+      .hero h1 { font-size: 11.5vw; }
+      .hero__sub { margin-top: 32px; }
+      .hero__actions { margin-top: 24px; }
+      .hero__pin { top: calc(56% + 8vw); right: auto; left: 50%; transform: translateX(-50%); width: 36vw; }
+      .hero__pin figcaption { margin-top: 10px; }
+
+      .intro { padding-block: 96px; }
+      .intro__text { text-align: left; margin-inline: 0; font-size: 1.375rem; max-width: 30ch; }
+      .intro__note { text-align: left; }
+
+      .ganhos__left, .slip { grid-column: 1 / -1; }
+      .total__fig { font-size: 18vw; }
+      .total { padding-top: 160px; }
+      .slip { margin-top: 56px; padding: 28px 20px 48px; }
+      .row--total { margin-inline: -20px; padding-inline: 20px; }
+
+      .points__photo { grid-column: 1 / -1; margin-left: calc(-1 * var(--margin)); }
+      .points__photo .circle { width: 82vw; max-height: 60svh; max-width: 60svh; margin-left: -10vw; }
+      .points__photo figcaption { margin-left: var(--margin); }
+      .points__body { grid-column: 1 / -1; margin-top: 56px; }
+      .points__grid { grid-template-columns: 1fr; gap: 28px; margin-top: 40px; }
+
+      .train__head, .train__nums { grid-column: 1 / -1; }
+      .train__nums { margin-top: 48px; }
+      .diagram { display: grid; grid-template-columns: 46vw 1fr; gap: 20px; }
+      .diagram__svg--wide { display: none; }
+      .diagram__svg--tall { display: block; width: 100%; height: auto; }
+      .stages { margin-top: 0; grid-template-columns: 1fr; gap: 28px; align-content: space-between; }
+
+      .pins__text, .frame-wrap { grid-column: 1 / -1; }
+      .frame-wrap { margin-top: 56px; }
+      .frame { width: 72vw; }
+
+      .plate__in { grid-template-columns: 1fr; min-height: 0; }
+      .plate__pic { padding: 64px 16px 0; }
+      .plate__text { padding: 48px var(--margin) 72px; }
+      .cells { grid-template-columns: 1fr; }
+      .cells a { min-height: 60px; }
+
+      .coupon { grid-template-columns: 1fr; margin-inline: 0; border-radius: 22px; }
+      .coupon::before, .coupon::after { left: auto; top: var(--perf, 50%); bottom: auto; transform: translateY(-50%); }
+      .coupon::before { left: -22px; }
+      .coupon::after { right: -22px; }
+      .coupon__left::after { right: 32px; left: 32px; top: auto; bottom: -3px; border-right: 0; border-bottom: 6px dotted var(--bg); }
+      .form .two, .form .uf { grid-template-columns: 1fr; }
+      .form .uf { grid-template-columns: 1fr 104px; }
+
+      .foot .foot__name { position: static; margin-bottom: 32px; }
+      .foot__col, .foot__col--wide { grid-column: span 6; }
+      .foot__col--wide { grid-column: 1 / -1; }
+    }
+
+    /* ---------- motion ---------- */
+    @media (prefers-reduced-motion: no-preference) {
+      .js [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 700ms var(--ease-out), transform 900ms var(--ease-out); transition-delay: calc(var(--d, 0) * 80ms); }
+      .js [data-reveal].is-in { opacity: 1; transform: none; }
+
+      .js .hero__disc { transform: scale(0.82); opacity: 0; animation: disc-in 1300ms var(--ease-expo) 80ms forwards; }
+      .js .hero__pin img { transform: scale(0.6); opacity: 0; animation: pin-in 900ms var(--ease-expo) 620ms forwards; }
+      .js .hero__pin figcaption { opacity: 0; animation: fade-up 700ms var(--ease-out) 900ms forwards; }
+      .js .hero .ln { display: block; overflow: clip; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+      .js .hero .ln > span { display: block; transform: translateY(105%); animation: rise 1000ms var(--ease-expo) forwards; animation-delay: calc(200ms + var(--l) * 90ms); }
+      .js .hero__sub, .js .hero__actions { opacity: 0; animation: fade-up 800ms var(--ease-out) forwards; }
+      .js .hero__sub { animation-delay: 480ms; }
+      .js .hero__actions { animation-delay: 600ms; }
+
+      .js .shutter { clip-path: inset(0 0 100% 0); transition: clip-path 1100ms var(--ease-in-out); }
+      .js .shutter video { transform: scale(1.12); transition: transform 1500ms var(--ease-soft); }
+      .js .shutter.is-in { clip-path: inset(0); }
+      .js .shutter.is-in video { transform: none; }
+
+      .points__photo img { animation: drift 24s var(--ease-soft) infinite alternate; }
+
+      .js .diagram__svg circle { transform-box: fill-box; transform-origin: center; transition: transform 1100ms var(--ease-expo), opacity 700ms var(--ease-out); transition-delay: calc(var(--i) * 6ms); }
+      .js .diagram:not(.is-in) circle { transform: translate(var(--dx), var(--dy)) scale(0.4); opacity: 0; }
+    }
+    @keyframes disc-in { to { transform: none; opacity: 1; } }
+    @keyframes pin-in { to { transform: none; opacity: 1; } }
+    @keyframes rise { to { transform: none; } }
+    @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+    @keyframes drift { from { transform: scale(1.02) translate(0, 0); } to { transform: scale(1.12) translate(-2%, -1.5%); } }
+  </style>
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<header class="hero" id="topo">
+  <div class="hero__disc" aria-hidden="true"></div>
+  <div class="wrap bar">
+    <a class="wordmark" href="#topo">empreenda amway</a>
+    <nav class="bar__links" aria-label="Seções">
+      <a class="link" href="#ganhos">ganhos</a>
+      <a class="link" href="#capacitacao">capacitação</a>
+      <a class="link" href="#reconhecimento">reconhecimento</a>
+      <a class="link" href="#cadastro">cadastro</a>
+    </nav>
+    <a class="bar__short link" href="#cadastro">cadastro</a>
+  </div>
+  <div class="wrap hero__body">
+    <div class="hero__text">
+      <h1><span class="ln" style="--l:0"><span>empreenda</span></span> <span class="ln" style="--l:1"><span>com a amway</span></span></h1>
+      <p class="hero__sub">Seu próprio negócio com baixo investimento, treinamento gratuito e lucro de até 43% na revenda, como renda extra ou em tempo integral.</p>
+      <div class="hero__actions">
+        <a class="btn" href="#cadastro">quero me cadastrar</a>
+        <a class="link" href="https://wa.me/5519991829137?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20a%20oportunidade%20de%20empreender%20com%20a%20Amway." target="_blank" rel="noopener">ou fale comigo no WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <figure class="hero__pin">
+    <img src="img/claudio.webp" width="514" height="514" alt="Claudio Camargo, sorrindo, em fundo claro">
+    <figcaption><b>Claudio Camargo</b>apresenta o plano pelo WhatsApp<br>+55 (19) 99182-9137</figcaption>
+  </figure>
+</header>
+
+<main>
+  <section class="intro wrap" aria-labelledby="intro-t">
+    <h2 class="sr-only" id="intro-t">Por que a Amway</h2>
+    <p class="intro__text lead" data-reveal>Há mais de 60 anos a Amway <span class="f"><img src="img/sede-ada.webp" width="240" height="240" alt="Sede da Amway em Ada, Michigan" loading="lazy"></span> ajuda gente comum a empreender com produtos do dia a dia <span class="f"><img src="img/acerola-fruto.webp" width="240" height="240" alt="Acerolas no galho" loading="lazy"></span> e um começo que cabe no bolso <span class="f"><img src="img/moeda-real.webp" width="240" height="240" alt="Moeda de um real" loading="lazy"></span>.</p>
+    <p class="intro__note small" data-reveal style="--d:1">Fundada em 1959 em Ada, Michigan (EUA). No Brasil, mais de 100 produtos de Nutrilite, Artistry, Amway Home e outras marcas.</p>
+  </section>
+
+  <section class="ganhos field" id="ganhos" aria-labelledby="ganhos-t">
+    <div class="wrap grid">
+      <div class="ganhos__left">
+        <h2 id="ganhos-t" data-reveal>ganhe de<br>duas formas</h2>
+        <p class="ganhos__note" data-reveal style="--d:1">Na revenda, você compra pelo preço de empresário e revende pelo preço sugerido, até 43% acima. Na equipe, recebe bônus por quem você convida e desenvolve. Simule a revenda:</p>
+        <form class="sim" id="sim" data-reveal style="--d:2" onsubmit="return false">
+          <div>
+            <label for="s-cli">clientes por mês <output id="o-cli" for="s-cli">15</output></label>
+            <input class="range" id="s-cli" type="range" min="1" max="60" step="1" value="15">
+          </div>
+          <div>
+            <label for="s-tic">compra média por cliente <output id="o-tic" for="s-tic">R$ 150</output></label>
+            <input class="range" id="s-tic" type="range" min="50" max="600" step="10" value="150">
+          </div>
+        </form>
+        <div class="total" data-reveal style="--d:3">
+          <span class="total__fig" id="t-fig"><small>R$</small>677</span>
+          <p>de lucro estimado por mês só com a revenda, antes dos bônus de equipe.</p>
+        </div>
+      </div>
+      <div class="slip" data-reveal style="--d:2" aria-live="polite">
+        <p class="slip__title">sua simulação</p>
+        <h3>Revenda</h3>
+        <div class="row"><span>Clientes no mês</span><span class="row__lead"></span><span class="row__v" id="r-cli">15</span></div>
+        <div class="row"><span>Compra média</span><span class="row__lead"></span><span class="row__v" id="r-tic">R$ 150,00</span></div>
+        <div class="row"><span>Total vendido</span><span class="row__lead"></span><span class="row__v" id="r-ven">R$ 2.250,00</span></div>
+        <h3>Seu custo</h3>
+        <div class="row"><span>Preço de empresário</span><span class="row__lead"></span><span class="row__v" id="r-cus">− R$ 1.573,43</span></div>
+        <div class="row"><span>Margem sobre o custo</span><span class="row__lead"></span><span class="row__v">43%</span></div>
+        <h3>Equipe</h3>
+        <div class="row"><span>Bônus de equipe</span><span class="row__lead"></span><span class="row__v">não incluído</span></div>
+        <div class="row row--total"><span>Lucro estimado</span><span class="row__lead"></span><span class="row__v" id="r-luc">R$ 676,57</span></div>
+        <p class="slip__fine small">Simulação ilustrativa com a margem máxima de revenda. Resultados variam com a dedicação de cada empreendedor.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="points" id="renda-extra" aria-labelledby="renda-t">
+    <div class="wrap grid">
+      <figure class="points__photo" data-reveal>
+        <div class="circle"><img src="img/acerola.webp" width="1400" height="1400" alt="Galho de aceroleira com frutos vermelhos e verdes" loading="lazy"></div>
+        <figcaption class="small">Acerola, fonte de vitamina C dos suplementos Nutrilite, a marca mais vendida da Amway.</figcaption>
+      </figure>
+      <div class="points__body">
+        <h2 id="renda-t" data-reveal>renda extra, risco reduzido</h2>
+        <ul class="points__grid">
+          <li class="pt" data-reveal><h3><span class="dot"></span>Independência</h3><p>Seja seu próprio chefe, defina seus horários e trabalhe no seu ritmo.</p></li>
+          <li class="pt" data-reveal style="--d:1"><h3><span class="dot"></span>Baixo investimento</h3><p>Comece pequeno, sem dívidas e sem comprometer o seu orçamento.</p></li>
+          <li class="pt" data-reveal style="--d:2"><h3><span class="dot"></span>Sem loja, sem estoque</h3><p>Sem ponto comercial, sem estoque gigante e sem funcionários.</p></li>
+          <li class="pt" data-reveal><h3><span class="dot"></span>Lucro proporcional</h3><p>Retorno rápido e crescimento que acompanham o seu esforço.</p></li>
+          <li class="pt" data-reveal style="--d:1"><h3><span class="dot"></span>Sem burocracia</h3><p>Comece rápido e trabalhe de onde estiver, no horário que escolher.</p></li>
+          <li class="pt" data-reveal style="--d:2"><h3><span class="dot"></span>Contato pessoal</h3><p>72% dos brasileiros preferem comprar de quem conhecem e confiam.</p></li>
+          <li class="pt" data-reveal><h3><span class="dot"></span>Você não está só</h3><p>Aprenda com líderes e cresça junto com a sua equipe.</p></li>
+          <li class="pt" data-reveal style="--d:1"><h3><span class="dot"></span>Reconhecimento</h3><p>Cada conquista é celebrada, com prêmios, pins e cerimônias.</p></li>
+          <li class="pt" data-reveal style="--d:2"><h3><span class="dot"></span>Bônus e viagens</h3><p>Além do lucro: bônus de equipe, eventos e viagens de recompensa.</p></li>
+          <li class="pt" data-reveal><h3><span class="dot"></span>Garantia de 100%</h3><p>Os produtos têm Garantia de Satisfação de 100%. Indique sem medo.</p></li>
+          <li class="pt" data-reveal style="--d:1"><h3><span class="dot"></span>Vontade não falta</h3><p>60% dos brasileiros querem empreender, acima da média global de 49%.</p></li>
+          <li class="pt" data-reveal style="--d:2"><h3><span class="dot"></span>Jovens na frente</h3><p>74% dos jovens de até 35 anos querem abrir o próprio negócio.</p></li>
+        </ul>
+        <p class="points__src small">Percentuais: Amway Global Entrepreneurship Report (AGER) 2018, citado pela Amway Brasil.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="train" id="capacitacao" aria-labelledby="train-t">
+    <div class="wrap">
+      <div class="grid">
+        <div class="train__head">
+          <h2 id="train-t" data-reveal>capacitação gratuita</h2>
+          <p data-reveal style="--d:1">Você não precisa ter experiência em vendas. A Amway treina você em produtos, vendas, liderança e desenvolvimento pessoal, do primeiro dia até a liderança.</p>
+        </div>
+        <div class="train__nums" data-reveal style="--d:2">
+          <div><b>70 mil+</b><span>pessoas já treinadas</span></div>
+          <div><b>20+</b><span>módulos de treinamento ao vivo</span></div>
+          <div><b>400+</b><span>conteúdos na plataforma gratuita</span></div>
+        </div>
+      </div>
+      <div class="diagram">
+        <svg class="diagram__svg diagram__svg--wide" viewBox="0 0 1200 266" data-w="1200" data-h="266" role="img" aria-label="Círculos soltos que se organizam numa faixa e depois em fileiras ordenadas: do começo sem experiência à liderança."></svg>
+        <svg class="diagram__svg diagram__svg--tall" viewBox="0 0 300 400" data-w="300" data-h="400" data-v="1" aria-hidden="true"></svg>
+        <div class="stages">
+          <div class="stage" data-reveal><h3>comece</h3><p>Você chega com dúvidas, como todo mundo. O treinamento começa no primeiro dia, no seu tempo.</p></div>
+          <div class="stage" data-reveal style="--d:1"><h3>aprenda no INA</h3><p>Instituto de Negócios Amway: plataforma online totalmente gratuita.</p>
+            <ul class="small">
+              <li><span class="dot"></span>Como falar dos produtos com confiança</li>
+              <li><span class="dot"></span>Primeiros passos e como aumentar o seu time</li>
+              <li><span class="dot"></span>Como vender pelas redes sociais</li>
+              <li><span class="dot"></span>Liderança e histórias de líderes</li>
+              <li><span class="dot"></span>O Plano de Negócios, passo a passo</li>
+            </ul>
+          </div>
+          <div class="stage" data-reveal style="--d:2"><h3>lidere</h3><p>Amway Academy: treinamento na palma da mão, no celular ou tablet.</p>
+            <ul class="small">
+              <li><span class="dot"></span>Vídeos e áudios de treinamento</li>
+              <li><span class="dot"></span>Materiais para download</li>
+              <li><span class="dot"></span>Ferramentas de vendas, redes sociais e liderança</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pins" id="reconhecimento" aria-labelledby="pins-t">
+    <div class="wrap grid">
+      <div class="pins__text">
+        <h2 id="pins-t" data-reveal>cada conquista, um pin</h2>
+        <p data-reveal style="--d:1">Na Amway, cada qualificação é simbolizada por um pin. À medida que você se qualifica, seus ganhos aumentam e chegam prêmios, viagens e experiências exclusivas.</p>
+        <div class="ladder" role="group" aria-label="Níveis de qualificação" data-reveal style="--d:2">
+          <button type="button" aria-pressed="true" data-i="0"><span class="dot"></span>prata <small>o começo</small></button>
+          <button type="button" aria-pressed="false" data-i="1"><span class="dot"></span>ouro</button>
+          <button type="button" aria-pressed="false" data-i="2"><span class="dot"></span>platina <small>primeiro nível de liderança</small></button>
+          <button type="button" aria-pressed="false" data-i="3"><span class="dot"></span>esmeralda</button>
+          <button type="button" aria-pressed="false" data-i="4"><span class="dot"></span>diamante <small>Diamond Club</small></button>
+        </div>
+        <p class="pins__cta" data-reveal style="--d:3"><a class="btn" href="https://wa.me/5519991829137?text=Ol%C3%A1!%20Quero%20conhecer%20o%20plano%20de%20reconhecimento%20da%20Amway." target="_blank" rel="noopener">quero conhecer o plano</a></p>
+      </div>
+      <div class="frame-wrap" data-reveal style="--d:1">
+        <button class="frame" type="button" id="frame" aria-label="Mostrar o próximo material">
+          <img class="is-on" src="img/prata.webp" width="768" height="768" alt="Filamentos de prata nativa" loading="lazy" data-cap="Prata: filamentos de prata nativa.">
+          <img src="img/ouro.webp" width="900" height="900" alt="Pepita de ouro" loading="lazy" data-cap="Ouro: pepita de ouro de aluvião, Colorado (EUA).">
+          <img src="img/platina.webp" width="900" height="900" alt="Pepita de platina" loading="lazy" data-cap="Platina: réplica de uma grande pepita dos Montes Urais.">
+          <img src="img/esmeralda.webp" width="900" height="900" alt="Cristal de esmeralda na rocha" loading="lazy" data-cap="Esmeralda: cristal na rocha, mina de Muzo (Colômbia).">
+          <img src="img/diamante.webp" width="900" height="900" alt="Cristal de diamante bruto e diamantes lapidados" loading="lazy" data-cap="Diamante: cristal bruto e pedras lapidadas, Smithsonian.">
+        </button>
+        <p class="frame-cap" id="frame-cap" aria-live="polite">Prata: filamentos de prata nativa.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="plate" id="eventos" aria-labelledby="ev-t">
+    <div class="plate__in">
+      <div class="plate__pic">
+        <figure class="shutter"><video poster="img/voo-poster.webp" width="800" height="800" muted loop playsinline preload="metadata" aria-label="Vista da janela de um avião acima das nuvens, ao amanhecer"><source src="video/voo.webm" type="video/webm"><source src="video/voo.mp4" type="video/mp4"></video></figure>
+      </div>
+      <div class="plate__text">
+        <div>
+          <h2 id="ev-t" data-reveal>eventos e viagens</h2>
+          <p class="plate__intro" data-reveal style="--d:1">Convenções com os lançamentos da marca e viagens nacionais e internacionais exclusivas, com tudo pago.</p>
+        </div>
+        <div data-reveal style="--d:2">
+          <div class="tabs" role="tablist" aria-label="Eventos">
+            <button role="tab" id="tab-0" aria-selected="true" aria-controls="ev-panel" type="button">novos platinas</button>
+            <button role="tab" id="tab-1" aria-selected="false" aria-controls="ev-panel" type="button" tabindex="-1">liderança</button>
+            <button role="tab" id="tab-2" aria-selected="false" aria-controls="ev-panel" type="button" tabindex="-1">diamond club</button>
+          </div>
+          <div class="tabpanel" id="ev-panel" role="tabpanel" aria-labelledby="tab-0" style="margin-top:32px">
+            <h3 id="ev-title">seminário de novos platinas</h3>
+            <p id="ev-text">A celebração de quem alcança o primeiro nível de liderança.</p>
+          </div>
+        </div>
+        <div class="cells" data-reveal style="--d:3">
+          <a href="#cadastro"><span class="dot"></span>quero participar</a>
+          <a href="https://wa.me/5519991829137?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20os%20eventos%20e%20viagens%20da%20Amway." target="_blank" rel="noopener">perguntar no WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="signup wrap" id="cadastro" aria-labelledby="cad-t">
+    <div class="coupon" data-reveal>
+      <div class="coupon__left">
+        <div>
+          <h2 id="cad-t">cadastre-se agora</h2>
+          <p style="margin-top:20px;max-width:34ch">Preencha e envie. O WhatsApp abre com seus dados prontos, direto para mim, sem intermediários.</p>
+        </div>
+        <ul class="steps">
+          <li><span class="dot"></span><span><b>Preencha</b>: leva menos de um minuto.</span></li>
+          <li><span class="dot"></span><span><b>Envie pelo WhatsApp</b>: nada sai sem você confirmar.</span></li>
+          <li><span class="dot"></span><span><b>Receba a apresentação</b>: o plano, os kits e os primeiros passos, sem compromisso.</span></li>
+        </ul>
+        <div class="coupon__me">
+          <img src="img/claudio.webp" width="514" height="514" alt="Claudio Camargo" loading="lazy">
+          <p><b>Claudio Camargo</b><a class="link" href="https://wa.me/5519991829137" target="_blank" rel="noopener">+55 (19) 99182-9137</a></p>
+        </div>
+      </div>
+      <form class="form" id="lead-form" novalidate>
+        <div class="form-error" id="form-error" role="alert"></div>
+        <div id="form-fields" style="display:grid;gap:10px">
+          <label class="sr-only" for="f-nome">Nome completo</label>
+          <input class="in" id="f-nome" name="nome" type="text" autocomplete="name" placeholder="Nome completo" required>
+          <div class="two">
+            <div><label class="sr-only" for="f-tel">Telefone / WhatsApp</label><input class="in" id="f-tel" name="telefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="WhatsApp com DDD" required></div>
+            <div><label class="sr-only" for="f-email">E-mail</label><input class="in" id="f-email" name="email" type="email" autocomplete="email" placeholder="E-mail" required></div>
+          </div>
+          <div class="two uf">
+            <div><label class="sr-only" for="f-cidade">Cidade</label><input class="in" id="f-cidade" name="cidade" type="text" autocomplete="address-level2" placeholder="Cidade" required></div>
+            <div><label class="sr-only" for="f-uf">UF</label><select class="in" id="f-uf" name="uf" required><option value="">UF</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></div>
+          </div>
+          <label class="sr-only" for="f-interesse">Seu principal interesse</label>
+          <select class="in" id="f-interesse" name="interesse" required><option value="">Seu principal interesse</option><option>Renda extra</option><option>Ter meu próprio negócio</option><option>Construir uma equipe</option><option>Ainda estou conhecendo a oportunidade</option></select>
+          <label class="sr-only" for="f-msg">Mensagem (opcional)</label>
+          <textarea class="in" id="f-msg" name="mensagem" placeholder="Mensagem ou dúvida (opcional)"></textarea>
+          <label class="consent" for="f-sim"><input id="f-sim" name="simulacao" type="checkbox" checked><span>Incluir minha simulação: <span class="sim-line" id="sim-line">15 clientes × R$ 150 = R$ 676,57 de lucro</span></span></label>
+          <label class="consent" for="f-maior"><input id="f-maior" name="maior18" type="checkbox" required><span>Tenho 18 anos ou mais e aceito ser contatado(a) pelo WhatsApp sobre esta oportunidade.</span></label>
+          <button class="submit" type="submit"><span class="dot"></span>enviar cadastro pelo WhatsApp</button>
+          <p class="form-fine small">O WhatsApp abre com seus dados na mensagem. Nada é enviado sem você confirmar.</p>
+        </div>
+        <div class="form-ok" id="form-ok" role="status">
+          <h3>quase lá!</h3>
+          <p>Abri o WhatsApp com a sua mensagem pronta. Se a janela não abriu, toque no botão abaixo.</p>
+          <a class="btn btn--light" id="ok-link" href="https://wa.me/5519991829137" target="_blank" rel="noopener">abrir o WhatsApp</a>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="foot field" aria-labelledby="foot-t">
+  <div class="wrap">
+    <div class="mark-wrap">
+    <h2 class="foot__name" id="foot-t">empreenda<br>amway</h2>
+    <div class="mark" aria-label="Os pins: prata, ouro, platina, esmeralda, diamante" role="img">
+      <span style="--s:1">prata</span><span style="--s:1.25">ouro</span><span style="--s:1.55">platina</span><span style="--s:1.9">esmeralda</span><span style="--s:2.35">diamante</span>
+    </div>
+    </div>
+    <div class="foot__cols">
+      <div class="foot__col">
+        <h2>nesta página</h2>
+        <ul><li><a class="link" href="#ganhos">Como você ganha</a></li><li><a class="link" href="#renda-extra">Renda extra</a></li><li><a class="link" href="#capacitacao">Capacitação</a></li><li><a class="link" href="#reconhecimento">Reconhecimento</a></li><li><a class="link" href="#eventos">Eventos e viagens</a></li></ul>
+      </div>
+      <div class="foot__col">
+        <h2>fale comigo</h2>
+        <p>Claudio Camargo<br><a class="link" href="https://wa.me/5519991829137" target="_blank" rel="noopener">WhatsApp +55 (19) 99182-9137</a><br><a class="link" href="https://claudiocamargo.com.br">claudiocamargo.com.br</a></p>
+      </div>
+      <div class="foot__col--wide">
+        <h2>avisos</h2>
+        <p>Página de recrutamento de empreendedor independente Amway. Conteúdo baseado nas páginas oficiais da Amway Brasil. Resultados individuais variam conforme a dedicação de cada empreendedor. Para participar é preciso ter 18 anos ou mais.</p>
+        <p>Fotos via Wikimedia Commons, recortadas: prata, Robert M. Lavinsky (<a class="link" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>); ouro e platina, James St. John (<a class="link" href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>); esmeralda, Didier Descouens (<a class="link" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>); diamante, Smithsonian Institution (domínio público); acerola, Forest e Kim Starr (<a class="link" href="https://creativecommons.org/licenses/by/3.0/us/">CC BY 3.0 US</a>); sede da Amway, Larry Pieniazek (<a class="link" href="https://creativecommons.org/licenses/by/2.5/">CC BY 2.5</a>); moeda, Banco Central do Brasil (domínio público); voo sobre as nuvens, L. Shyamal (CC0). <a class="link" href="credits.html">Fontes de cada imagem</a>.</p>
+      </div>
+    </div>
+    <div class="foot__last">
+      <p>© 2026 Claudio Camargo. Amway, Nutrilite e Artistry são marcas da Amway.</p>
+      <a class="btn btn--light" href="#cadastro">quero me cadastrar</a>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" id="wa-float" href="https://wa.me/5519991829137?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20a%20oportunidade%20de%20empreender%20com%20a%20Amway." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.9-4.45 9.9-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.03a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.12.82.83-3.04-.2-.31a8.08 8.08 0 0 1-1.24-4.28c0-4.47 3.64-8.11 8.16-8.11 4.47 0 8.11 3.64 8.11 8.11 0 4.48-3.64 8.12-8.11 8.12zm4.45-6.08c-.24-.12-1.44-.71-1.66-.79-.22-.08-.39-.12-.55.12-.16.25-.63.79-.77.97-.14.18-.29.2-.53.08-.24-.12-1.03-.38-1.96-1.21-.72-.65-1.21-1.440-1.35-1.68-.14-.25-.02-.38.11-.51.11-.11.24-.29.37-.43.12-.15.16-.25.24-.41.08-.16.04-.31-.02-.43-.06-.12-.55-1.32-.75-1.84-.2-.48-.4-.41-.55-.42h-.47c-.16 0-.43.06-.65.31-.22.25-.86.84-.86 2.050 0 1.21.88 2.38 1 2.54.12.16 1.73 2.64 4.19 3.7.59.25 1.04.4 1.4.52.59.19 1.12.16 1.54.1.47-.07 1.44-.59 1.77-1.15.33-.57.33-1.05.23-1.15-.09-.1-.22-.16-.47-.28z"/></svg>
+</a>
+
+<script>
+(function () {
+  var WA = "5519991829137";
+  var MARGIN = 1.43;
+  var brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+  var $ = function (id) { return document.getElementById(id); };
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* Revenda simulator: the receipt rows add up to the total. */
+  var cli = $("s-cli"), tic = $("s-tic");
+  var sim = { clientes: 15, ticket: 150, lucro: 0 };
+  function updateSim() {
+    var c = +cli.value, t = +tic.value;
+    var vendas = c * t;
+    var custo = Math.round((vendas / MARGIN) * 100) / 100;
+    var lucro = Math.round((vendas - custo) * 100) / 100;
+    sim = { clientes: c, ticket: t, lucro: lucro };
+    $("o-cli").textContent = c;
+    $("o-tic").textContent = "R$ " + t;
+    $("r-cli").textContent = c;
+    $("r-tic").textContent = brl.format(t);
+    $("r-ven").textContent = brl.format(vendas);
+    $("r-cus").textContent = "− " + brl.format(custo);
+    $("r-luc").textContent = brl.format(lucro);
+    $("t-fig").innerHTML = "<small>R$</small>" + Math.round(lucro).toLocaleString("pt-BR");
+    $("sim-line").textContent = c + " clientes × R$ " + t + " = " + brl.format(lucro) + " de lucro";
+  }
+  cli.addEventListener("input", updateSim);
+  tic.addEventListener("input", updateSim);
+  updateSim();
+
+  /* Many into one: scattered circles, a tight ribbon, then ordered rows. Same seed every visit. */
+  document.querySelectorAll(".diagram__svg").forEach(function (svg) {
+    var s = 7, rnd = function () { return (s = (s * 16807) % 2147483647) / 2147483647; };
+    var W = +svg.getAttribute("data-w"), H = +svg.getAttribute("data-h"), V = svg.hasAttribute("data-v");
+    var across = V ? W : H, third = (V ? H : W) / 3, i = 0, out = "";
+    function put(a, b, cls) {
+      var dx = Math.round((rnd() - 0.5) * 160), dy = Math.round((rnd() - 0.5) * 120);
+      var x = V ? b : a, y = V ? a : b;
+      out += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="6.5" class="' + cls + '" style="--dx:' + dx + 'px;--dy:' + dy + 'px;--i:' + (i++) + '"/>';
+    }
+    for (var k = 0; k < 45; k++) { var a = rnd() * (third - 40) + 20, b = rnd() * (across - 40) + 20; put(a, b, k % 2 ? "p1" : "p2"); }
+    for (var r = 0; r < 3; r++) for (k = 0; k < 16; k++) put(third + 20 + k * (third - 40) / 15, across / 2 + (r - 1) * 15, "m");
+    for (r = 0; r < 6; r++) for (k = 0; k < 8; k++) put(2 * third + 20 + k * (third - 40) / 7, 30 + r * (across - 60) / 5, "a");
+    svg.innerHTML = out;
+  });
+
+  /* Entrances, once. */
+  var reveal = document.querySelectorAll("[data-reveal], .shutter, .diagram");
+  if ("IntersectionObserver" in window && !reduce) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var el = e.target.__reveal || e.target;
+        el.classList.add("is-in"); io.unobserve(e.target);
+      });
+    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.08 });
+    reveal.forEach(function (el) {
+      /* A clipped element is invisible to the observer, so watch its parent instead. */
+      var target = el.classList.contains("shutter") ? el.parentElement : el;
+      target.__reveal = el;
+      io.observe(target);
+    });
+  } else {
+    reveal.forEach(function (el) { el.classList.add("is-in"); });
+  }
+
+  /* One frame, contents change: the five pins. */
+  var frame = $("frame"), imgs = frame.querySelectorAll("img"), cap = $("frame-cap");
+  var ladder = document.querySelectorAll(".ladder button");
+  var cur = 0, timer = null;
+  function show(i) {
+    cur = (i + imgs.length) % imgs.length;
+    imgs.forEach(function (im, k) { im.classList.toggle("is-on", k === cur); });
+    ladder.forEach(function (b, k) { b.setAttribute("aria-pressed", k === cur ? "true" : "false"); });
+    cap.textContent = imgs[cur].getAttribute("data-cap");
+  }
+  function restart() {
+    if (reduce) return;
+    clearInterval(timer);
+    timer = setInterval(function () { show(cur + 1); }, 3000);
+  }
+  frame.addEventListener("click", function () { show(cur + 1); restart(); });
+  ladder.forEach(function (b) { b.addEventListener("click", function () { show(+b.getAttribute("data-i")); restart(); }); });
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) restart(); else clearInterval(timer); });
+    }).observe(frame);
+  }
+
+  /* Event tabs. */
+  var events = [
+    ["seminário de novos platinas", "A celebração de quem alcança o primeiro nível de liderança."],
+    ["seminário de liderança", "Treinamento e inspiração em destinos incríveis, ao lado dos maiores líderes do negócio."],
+    ["diamond club", "Viagens internacionais luxuosas reservadas aos líderes Diamante."]
+  ];
+  var tabs = document.querySelectorAll('[role="tab"]');
+  function selectTab(i, focus) {
+    tabs.forEach(function (t, k) {
+      t.setAttribute("aria-selected", k === i ? "true" : "false");
+      t.tabIndex = k === i ? 0 : -1;
+    });
+    $("ev-panel").setAttribute("aria-labelledby", "tab-" + i);
+    $("ev-title").textContent = events[i][0];
+    $("ev-text").textContent = events[i][1];
+    if (focus) tabs[i].focus();
+  }
+  tabs.forEach(function (t, k) {
+    t.addEventListener("click", function () { selectTab(k); });
+    t.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") selectTab((k + 1) % tabs.length, true);
+      if (e.key === "ArrowLeft") selectTab((k + tabs.length - 1) % tabs.length, true);
+    });
+  });
+
+  /* The clip plays only while it is on screen, and never under reduced motion. */
+  var clip = document.querySelector(".shutter video");
+  if (clip && !reduce && "IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { var pr = clip.play(); if (pr) pr.catch(function () {}); } else clip.pause(); });
+    }, { threshold: 0.25 }).observe(clip.closest(".plate__pic"));
+  }
+
+  /* Floating WhatsApp button hides while the form is on screen. */
+  var fl = $("wa-float");
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { fl.classList.toggle("is-hidden", e.isIntersecting); });
+    }, { threshold: 0.2 }).observe($("cadastro"));
+  }
+
+  /* Lead form: builds the WhatsApp message. */
+  var form = $("lead-form"), errorBox = $("form-error"), okBox = $("form-ok"), okLink = $("ok-link"), fieldsBox = $("form-fields");
+  var tel = $("f-tel");
+  tel.addEventListener("input", function () {
+    var d = tel.value.replace(/\D/g, "").slice(0, 11);
+    if (d.length > 6) tel.value = "(" + d.slice(0, 2) + ") " + d.slice(2, d.length - 4) + "-" + d.slice(-4);
+    else if (d.length > 2) tel.value = "(" + d.slice(0, 2) + ") " + d.slice(2);
+    else if (d.length > 0) tel.value = "(" + d;
+  });
+  function val(id) { return $(id).value.trim(); }
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var nome = val("f-nome"), telefone = val("f-tel"), email = val("f-email"),
+        cidade = val("f-cidade"), uf = val("f-uf"), interesse = val("f-interesse"),
+        mensagem = val("f-msg"), maior = $("f-maior").checked, incluirSim = $("f-sim").checked;
+    var problems = [];
+    if (!nome) problems.push("seu nome");
+    if (telefone.replace(/\D/g, "").length < 10) problems.push("um WhatsApp válido com DDD");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) problems.push("um e-mail válido");
+    if (!cidade) problems.push("sua cidade");
+    if (!uf) problems.push("sua UF");
+    if (!interesse) problems.push("seu principal interesse");
+    if (!maior) problems.push("a confirmação de que você tem 18 anos ou mais");
+    if (problems.length) {
+      errorBox.textContent = "Faltou preencher: " + problems.join(", ") + ".";
+      errorBox.classList.add("show");
+      errorBox.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+      return;
+    }
+    errorBox.classList.remove("show");
+    var lines = [
+      "Olá! Quero me cadastrar para empreender com a Amway. Seguem meus dados:",
+      "",
+      "• Nome: " + nome,
+      "• Telefone/WhatsApp: " + telefone,
+      "• E-mail: " + email,
+      "• Cidade/UF: " + cidade + " - " + uf,
+      "• Maior de 18 anos: Sim",
+      "• Interesse: " + interesse
+    ];
+    if (incluirSim) lines.push("• Simulação: " + sim.clientes + " clientes/mês × R$ " + sim.ticket + " = " + brl.format(sim.lucro) + " de lucro estimado");
+    if (mensagem) lines.push("• Mensagem: " + mensagem);
+    var url = "https://wa.me/" + WA + "?text=" + encodeURIComponent(lines.join("\n"));
+    okLink.href = url;
+    fieldsBox.style.display = "none";
+    okBox.classList.add("show");
+    window.open(url, "_blank", "noopener");
+  });
+})();
+</script>
+</body>
+</html>
