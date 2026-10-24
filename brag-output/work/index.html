@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: M; src: url(assets/montserrat.woff2) format('woff2'); font-weight: 100 900; }
+:root { --blue:#253A8F; --teal:#00A498; --navy:#0B1638; --navy2:#13246A; --ink:#1B1F2E; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--navy); font-family: M, sans-serif; }
+.layer { position: absolute; inset: 0; }
+.abs { position: absolute; }
+#net { position: absolute; inset: 0; }
+.h-hook { color: #fff; font-weight: 800; font-size: 104px; letter-spacing: -0.035em; line-height: 1; white-space: nowrap; left: 0; right: 0; text-align: center; }
+.dash { display: block; width: 96px; height: 10px; background: var(--teal); border-radius: 5px; }
+.kicker { font-weight: 700; font-size: 24px; letter-spacing: 0.28em; color: var(--teal); }
+#s3 { background: #fff; }
+#s3 h2 { font-weight: 800; font-size: 68px; letter-spacing: -0.03em; color: var(--ink); }
+.card { width: 540px; }
+.card .img { width: 540px; height: 312px; border-radius: 22px; overflow: hidden; box-shadow: 0 24px 60px rgba(15,30,80,.22); background: #ddd; }
+.card .img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card .lab { margin-top: 26px; font-weight: 700; font-size: 34px; color: var(--ink); letter-spacing: -0.01em; display: flex; align-items: center; gap: 14px; }
+.num { display: inline-flex; width: 46px; height: 46px; border-radius: 12px; background: var(--blue); color: #fff; font-size: 24px; font-weight: 700; align-items: center; justify-content: center; font-style: italic; }
+.arrow { width: 90px; height: 312px; }
+.pill { background: var(--teal); color: #fff; font-weight: 700; font-size: 36px; padding: 18px 40px; border-radius: 999px; white-space: nowrap; }
+#s4 { background: linear-gradient(135deg, #253A8F 0%, #1A2C78 55%, #0F1E5A 100%); }
+#s4 h2 { color: #fff; font-weight: 800; font-size: 76px; letter-spacing: -0.03em; text-align: center; left: 0; right: 0; line-height: 1.08; }
+.chip { width: 330px; height: 104px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 30px; letter-spacing: 0.08em; color: #fff; border: 3px solid rgba(255,255,255,.35); }
+.disc { color: rgba(255,255,255,.55); font-weight: 600; font-size: 28px; letter-spacing: 0.04em; left: 0; right: 0; text-align: center; white-space: nowrap; }
+#s5 { background: var(--navy); overflow: hidden; }
+.tile { width: 440px; height: 262px; border-radius: 18px; overflow: hidden; box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+.tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tile span { position: absolute; left: 14px; bottom: 12px; background: rgba(11,22,56,.82); color: #fff; font-weight: 700; font-size: 20px; padding: 7px 14px; border-radius: 8px; letter-spacing: 0.02em; }
+#s5 h2 { color: #fff; font-weight: 800; font-size: 120px; letter-spacing: -0.035em; left: 0; right: 0; text-align: center; white-space: nowrap; }
+#s6 { background: #fff; }
+#s6 h2 { font-weight: 800; font-size: 82px; letter-spacing: -0.035em; color: var(--ink); line-height: 1.04; }
+#s7 { background: transparent; }
+.cta { color: #fff; font-weight: 700; font-size: 60px; letter-spacing: -0.02em; left: 0; right: 0; text-align: center; }
+.url { color: var(--teal); font-weight: 700; font-size: 30px; letter-spacing: 0.32em; left: 0; right: 0; text-align: center; }
+</style>
+</head>
+<body>
+<canvas id="net" width="1920" height="1080"></canvas>
+
+<!-- 1 hook -->
+<div id="s1" class="layer">
+  <div id="h1a" class="abs h-hook" style="top:390px">Projetos de engenharia</div>
+  <div id="h1b" class="abs h-hook" style="top:530px">para a indústria brasileira.</div>
+  <div id="h1d" class="abs" style="left:912px;top:682px"><span class="dash"></span></div>
+</div>
+
+<!-- 2 reveal -->
+<div id="s2" class="layer">
+  <img id="logo2" class="abs" src="assets/logo_white.png" style="left:560px;top:330px;width:800px">
+  <img id="badge2" class="abs" src="assets/badge_white.png" style="left:1438px;top:300px;width:250px">
+  <div id="sub2" class="abs kicker" style="left:0;right:0;text-align:center;top:700px;font-size:30px">PROJETANDO O FUTURO DA ENGENHARIA NO BRASIL</div>
+</div>
+
+<!-- 3 scan flow -->
+<div id="s3" class="layer">
+  <div id="k3" class="abs kicker" style="left:90px;top:130px">SCANNER 3D · NUVEM DE PONTOS</div>
+  <h2 id="h3" class="abs" style="left:90px;top:175px">Levantamento de campo otimizado.</h2>
+  <div id="d3" class="abs" style="left:90px;top:272px"><span class="dash"></span></div>
+  <div id="c1" class="abs card" style="left:90px;top:380px"><div class="img"><img src="assets/scan.jpg"></div><div class="lab"><span class="num">1</span>Varredura Laser 3D</div></div>
+  <svg id="a1" class="abs arrow" style="left:630px;top:380px" viewBox="0 0 110 312"><path id="a1p" d="M12 156 H74 M60 139 L78 156 L60 173" fill="none" stroke="#00A498" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div id="c2" class="abs card" style="left:720px;top:380px"><div class="img"><img src="assets/cloud.jpg"></div><div class="lab"><span class="num">2</span>Nuvem de pontos</div></div>
+  <svg id="a2" class="abs arrow" style="left:1260px;top:380px" viewBox="0 0 110 312"><path id="a2p" d="M12 156 H74 M60 139 L78 156 L60 173" fill="none" stroke="#00A498" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div id="c3" class="abs card" style="left:1350px;top:380px"><div class="img"><img src="assets/model.jpg"></div><div class="lab"><span class="num">3</span>Modelo 3D</div></div>
+  <div id="p3" class="abs pill" style="left:90px;top:868px">Precisão milimétrica.</div>
+</div>
+
+<!-- 4 phases -->
+<div id="s4" class="layer">
+  <div id="k4" class="abs kicker" style="left:0;right:0;text-align:center;top:250px;color:#7FE3DA">CONCEITUAL À IMPLANTAÇÃO</div>
+  <h2 id="h4" class="abs" style="top:300px">Atuamos em todas as<br>fases do projeto.</h2>
+  <div id="row4" class="abs" style="left:0;right:0;top:600px;display:flex;justify-content:center;gap:40px">
+    <div class="chip" id="ch0">CONCEITUAL</div><div class="chip" id="ch1">BÁSICA</div><div class="chip" id="ch2">DETALHADA</div><div class="chip" id="ch3">IMPLANTAÇÃO</div>
+  </div>
+  <div id="disc4" class="abs disc" style="top:800px">Processos · Mecânica · Tubulação · Elétrica · Instrumentação · Automação · Civil</div>
+</div>
+
+<!-- 5 cases -->
+<div id="s5" class="layer">
+  <div id="mosaic" class="abs" style="left:0;top:0;width:1920px;height:1080px"></div>
+  <div id="scrim5" class="abs" style="left:0;right:0;top:0;bottom:0;background:radial-gradient(ellipse 900px 300px at 50% 50%, rgba(11,22,56,.92), rgba(11,22,56,.55) 60%, rgba(11,22,56,.25))"></div>
+  <h2 id="h5" class="abs" style="top:470px">Cases de sucesso.</h2>
+</div>
+
+<!-- 6 clients -->
+<div id="s6" class="layer">
+  <div id="d6" class="abs" style="left:120px;top:400px"><span class="dash"></span></div>
+  <h2 id="h6" class="abs" style="left:120px;top:440px;width:640px">Nosso portfólio de clientes.</h2>
+  <img id="wall" class="abs" src="assets/clients.png" style="left:820px;top:150px;width:980px">
+</div>
+
+<!-- 7 outro -->
+<div id="s7" class="layer">
+  <img id="logo7" class="abs" src="assets/logo_white.png" style="left:580px;top:290px;width:760px">
+  <div id="cta7" class="abs cta" style="top:640px">Solicite uma proposta.</div>
+  <div id="url7" class="abs url" style="top:760px">WWW.BELSYS.COM.BR</div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const eo = k => 1 - Math.pow(1 - clamp(k), 3);
+const eio = k => { k = clamp(k); return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; };
+const eback = k => { k = clamp(k); const c = 1.4; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
+const prog = (t, a, d) => clamp((t - a) / d);
+
+// Scene cuts on strong beats of vol-11.
+const T = { s2: 3.70, s3: 6.34, s4: 10.54, s5: 13.18, s6: 15.81, s7: 17.91, end: 21.6 };
+
+// in: rise + unblur. out: quick fade before the cut.
+function show(el, t, a, outAt, opt = {}) {
+  const d = opt.d ?? 0.5, dy = opt.dy ?? 40, od = opt.od ?? 0.22;
+  const k = eo(prog(t, a, d));
+  const o = outAt == null ? 1 : 1 - prog(t, outAt - od, od);
+  const blur = (1 - k) * (opt.blur ?? 10);
+  el.style.opacity = (k * o).toFixed(4);
+  el.style.transform = `translateY(${((1 - k) * dy).toFixed(2)}px) scale(${lerp(opt.s0 ?? 1, 1, k).toFixed(4)})`;
+  el.style.filter = blur > 0.05 ? `blur(${blur.toFixed(2)}px)` : 'none';
+}
+function vis(el, on) { el.style.display = on ? '' : 'none'; }
+// Circle wipe for a whole layer.
+function wipe(el, t, a, cx, cy, d = 0.5) {
+  const k = eio(prog(t, a, d));
+  el.style.clipPath = k >= 1 ? 'none' : `circle(${(k * 2300).toFixed(1)}px at ${cx}px ${cy}px)`;
+}
+
+// Seeded point field.
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const N = 170, P = [];
+for (let i = 0; i < N; i++) {
+  const a = rnd() * Math.PI * 2, r = Math.pow(rnd(), 0.7) * 1150;
+  P.push({ x: 960 + Math.cos(a) * r * 1.25, y: 540 + Math.sin(a) * r * 0.75, ph: rnd() * 6.28, w: 0.25 + rnd() * 0.5, amp: 10 + rnd() * 26, sz: 1.6 + rnd() * 2.6,
+           tx: 600 + rnd() * 720, ty: 360 + rnd() * 200 });
+}
+const ctx = $('net').getContext('2d');
+function drawNet(t) {
+  // Background
+  const g = ctx.createRadialGradient(960, 420, 100, 960, 540, 1300);
+  g.addColorStop(0, '#1B2F86'); g.addColorStop(0.55, '#0F1E5A'); g.addColorStop(1, '#070F2B');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 1920, 1080);
+  let mode, z, gather = 0, alpha = 1;
+  if (t < T.s3) {
+    z = lerp(2.4, 1.0, eio(t / 3.9));                  // pull back: micro -> macro
+    gather = eio(prog(t, 3.35, 0.75));                  // rush into the logo
+    alpha = 1 - prog(t, 3.95, 0.6) * 0.75;
+  } else {
+    z = lerp(1.25, 1.0, eo(prog(t, T.s7, 3.5)));
+    gather = 0; alpha = 0.55;
+  }
+  const pts = P.map(p => {
+    let x = p.x + Math.sin(t * p.w + p.ph) * p.amp, y = p.y + Math.cos(t * p.w * 0.8 + p.ph) * p.amp;
+    x = 960 + (x - 960) * z; y = 540 + (y - 540) * z;
+    return { x: lerp(x, p.tx, gather), y: lerp(y, p.ty, gather), s: p.sz * (0.6 + z * 0.4) };
+  });
+  ctx.lineWidth = 1.2;
+  const L = 170 * (0.8 + z * 0.2);
+  for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) {
+    const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y, d = Math.hypot(dx, dy);
+    if (d < L) { ctx.strokeStyle = `rgba(140,190,255,${((1 - d / L) * 0.32 * alpha * (1 - gather * 0.8)).toFixed(3)})`;
+      ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke(); }
+  }
+  for (const p of pts) {
+    ctx.fillStyle = `rgba(200,230,255,${(0.85 * alpha).toFixed(3)})`;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, 6.283); ctx.fill();
+    ctx.fillStyle = `rgba(0,164,152,${(0.18 * alpha).toFixed(3)})`;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.s * 3.2, 0, 6.283); ctx.fill();
+  }
+}
+
+// Mosaic tiles
+const tiles = [['m_klabin','Klabin'],['m_unilever','Unilever'],['m_goodyear','Goodyear'],['m_rousselot','Rousselot'],
+               ['m_croda','Croda'],['m_sylvamo','Sylvamo do Brasil'],['m_oji','Oji Papéis Especiais'],['m_gtex','GTEX'],['m_bignardi','Bignardi'],['m_ache','Aché']];
+const mos = $('mosaic');
+tiles.forEach(([f, n], i) => {
+  const d = document.createElement('div'); d.className = 'abs tile'; d.id = 't' + i;
+  d.innerHTML = `<img src="assets/${f}.jpg"><span>${n}</span>`;
+  const col = i % 5, row = Math.floor(i / 5);
+  d.dataset.x = -215 + col * 470 + (row ? 60 : -60); d.dataset.y = 110 + row * 600;  // two rows, scrim band between
+  mos.appendChild(d);
+});
+
+window.render = function (t) {
+  drawNet(t);
+  // 1 hook
+  const s1 = t < T.s2 + 0.1; vis($('s1'), s1);
+  if (s1) {
+    const out = 3.48;
+    show($('h1a'), t, 0.15, out, { d: 0.6, dy: 50 });
+    show($('h1b'), t, 1.55, out, { d: 0.55, dy: 50 });
+    const dk = eo(prog(t, 1.85, 0.45)) * (1 - prog(t, out - 0.22, 0.22));
+    $('h1d').style.opacity = dk; $('h1d').style.transform = `scaleX(${dk})`;
+  }
+  // 2 reveal
+  const s2 = t >= T.s2 - 0.3 && t < T.s3; vis($('s2'), s2);
+  if (s2) {
+    show($('logo2'), t, 3.78, T.s3 - 0.05, { d: 0.6, dy: 0, s0: 0.86, blur: 18 });
+    show($('badge2'), t, 4.75, T.s3 - 0.05, { d: 0.5, dy: 30, s0: 0.8 });
+    show($('sub2'), t, 4.23, T.s3 - 0.05, { d: 0.5, dy: 24 });
+  }
+  // 3 scan
+  const s3 = t >= T.s3 && t < T.s4 + 0.6; vis($('s3'), s3);
+  if (s3) {
+    wipe($('s3'), t, T.s3, 1920, 1080, 0.5);
+    const out = T.s4;
+    show($('k3'), t, 6.45, out, { dy: 20 }); show($('h3'), t, 6.5, out);
+    const dk = eo(prog(t, 6.7, 0.4)) * (1 - prog(t, out - 0.22, 0.22));
+    $('d3').style.opacity = dk; $('d3').style.transform = `scaleX(${dk})`; $('d3').style.transformOrigin = 'left';
+    show($('c1'), t, 6.62, out, { d: 0.55, dy: 70 });
+    show($('c2'), t, 7.38, out, { d: 0.55, dy: 70 });
+    show($('c3'), t, 8.44, out, { d: 0.55, dy: 70 });
+    [['a1p', 7.2], ['a2p', 8.26]].forEach(([id, a]) => {
+      const p = $(id), k = eo(prog(t, a, 0.35)) * (1 - prog(t, out - 0.22, 0.22));
+      p.style.strokeDasharray = '140'; p.style.strokeDashoffset = (140 * (1 - k)).toFixed(1); p.style.opacity = k > 0 ? 1 : 0;
+    });
+    show($('p3'), t, 8.96, out, { d: 0.45, dy: 30, s0: 0.9 });
+  }
+  // 4 phases
+  const s4 = t >= T.s4 && t < T.s5 + 0.6; vis($('s4'), s4);
+  if (s4) {
+    wipe($('s4'), t, T.s4, 0, 540, 0.5);
+    const out = T.s5;
+    show($('k4'), t, 10.62, out, { dy: 20 }); show($('h4'), t, 10.66, out, { d: 0.5 });
+    const lit = [11.06, 11.60, 12.12, 12.65];
+    for (let i = 0; i < 4; i++) {
+      const c = $('ch' + i), inK = eo(prog(t, 10.8 + i * 0.07, 0.4)), o = 1 - prog(t, out - 0.22, 0.22);
+      const l = eo(prog(t, lit[i], 0.25));
+      c.style.opacity = inK * o;
+      c.style.transform = `translateY(${(1 - inK) * 30}px) scale(${1 + 0.06 * Math.sin(Math.PI * prog(t, lit[i], 0.35))})`;
+      c.style.background = `rgba(0,164,152,${l})`; c.style.borderColor = l > 0.5 ? 'rgba(0,164,152,1)' : 'rgba(255,255,255,.35)';
+    }
+    show($('disc4'), t, 11.2, out, { dy: 16 });
+  }
+  // 5 cases
+  const s5 = t >= T.s5 && t < T.s6 + 0.6; vis($('s5'), s5);
+  if (s5) {
+    const out = T.s6;
+    $('s5').style.opacity = eo(prog(t, T.s5, 0.3));
+    tiles.forEach((_, i) => {
+      const el = $('t' + i), a = T.s5 + 0.04 * i, k = eo(prog(t, a, 0.55));
+      const drift = (t - T.s5) * (i < 5 ? 28 : -28);
+      el.style.left = (+el.dataset.x + drift + (1 - k) * (i < 5 ? -120 : 120)) + 'px';
+      el.style.top = el.dataset.y + 'px';
+      el.style.opacity = k * (1 - prog(t, out - 0.22, 0.22));
+    });
+    $('scrim5').style.opacity = eo(prog(t, T.s5 + 0.2, 0.4));
+    show($('h5'), t, 13.45, out, { d: 0.5, s0: 0.94 });
+  }
+  // 6 clients
+  const s6 = t >= T.s6 && t < T.s7 + 0.6; vis($('s6'), s6);
+  if (s6) {
+    wipe($('s6'), t, T.s6, 1920, 0, 0.5);
+    if (t >= T.s7) $('s6').style.clipPath = `circle(${((1 - eio(prog(t, T.s7, 0.5))) * 2300).toFixed(1)}px at 0px 1080px)`;
+    const out = T.s7;
+    show($('h6'), t, 15.9, out, { d: 0.5 });
+    const dk = eo(prog(t, 16.05, 0.4)) * (1 - prog(t, out - 0.22, 0.22));
+    $('d6').style.opacity = dk; $('d6').style.transform = `scaleX(${dk})`; $('d6').style.transformOrigin = 'left';
+    const w = eio(prog(t, 15.98, 0.85));
+    $('wall').style.clipPath = `inset(0 0 ${(100 - w * 100).toFixed(2)}% 0)`;
+    $('wall').style.opacity = 1 - prog(t, out - 0.22, 0.22);
+  }
+  // 7 outro (on the point field)
+  const s7 = t >= T.s7; vis($('s7'), s7);
+  if (s7) {
+    show($('logo7'), t, 18.15, null, { d: 0.6, dy: 0, s0: 0.9, blur: 16 });
+    show($('cta7'), t, 18.75, null, { d: 0.5, dy: 30 });
+    show($('url7'), t, 19.3, null, { d: 0.5, dy: 20 });
+  }
+  // Network canvas only shows under navy scenes.
+  $('net').style.display = (t < T.s3 + 0.6 || t >= T.s7) ? '' : 'none';
+};
+
+window.ready = (async () => {
+  await document.fonts.load('800 100px M'); await document.fonts.load('600 30px M'); await document.fonts.ready;
+  await Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+  return true;
+})();
+</script>
+</body>
+</html>
