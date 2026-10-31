@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 720px; height: 1280px; overflow: hidden; background: #14151B; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+#stage { position: absolute; inset: 0; overflow: hidden; }
+.a { position: absolute; }
+.c { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; }
+.mono { font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .22em; }
+.caret { display: inline-block; width: .055em; min-width: 2px; height: .82em; background: #F27E40; margin-left: .06em; vertical-align: -.06em; }
+svg { position: absolute; left: 0; top: 0; overflow: visible; }
+.w { display: inline-block; position: relative; }
+.br::before, .br::after { content: ''; position: absolute; width: 7px; height: 7px; border: 2px solid #F6D9A8; }
+.br::before { left: -6px; top: -3px; border-right: 0; border-bottom: 0; }
+.br::after { right: -6px; bottom: -3px; border-left: 0; border-top: 0; }
+.ic { display: inline-block; width: 30px; height: 30px; margin: 0 8px; position: relative; vertical-align: middle; }
+.ic svg { width: 30px; height: 30px; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+// ---------- palette ----------
+const C = { blue: '#1E64A2', deep: '#12325A', orange: '#F27E40', sand: '#F6D9A8', morning: '#F4F1EE', paper: '#E8E4DF', ink: '#14151B' };
+const W = 720, H = 1280, CX = 360, CY = 640;
+
+// ---------- math ----------
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const P = (t, a, b) => cl((t - a) / (b - a));
+const lerp = (a, b, k) => a + (b - a) * k;
+const eo3 = x => 1 - Math.pow(1 - x, 3);
+const eo5 = x => 1 - Math.pow(1 - x, 5);
+const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const ei3 = x => x * x * x;
+const eback = x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+
+// beats of the track (librosa, 112.3 BPM)
+const BEATS = [0.56,1.09,1.65,2.16,2.69,3.25,3.78,4.3,4.83,5.36,5.92,6.43,6.97,7.5,8.03,8.57,9.1,9.64,10.17,10.7,11.24,11.77,12.31,12.84,13.37,13.91,14.44,14.98,15.51,16.04,16.58,17.11,17.65,18.18,18.72,19.25,19.78,20.32,20.85,21.36,21.9,22.43,22.96,23.5,24.03];
+
+// ---------- helpers ----------
+const blink = t => (Math.floor(t / 0.27) % 2 === 0 ? 1 : 0);
+const caret = (t, on = true) => on ? `<span class="caret" style="opacity:${blink(t)}"></span>` : '';
+// parts: [[text, weight], ...]; n = visible chars
+function typed(parts, n) {
+  let out = '', left = Math.max(0, Math.floor(n));
+  for (const [txt, wgt] of parts) {
+    const s = txt.slice(0, left); left -= s.length;
+    if (s) out += `<span style="font-weight:${wgt}">${s}</span>`;
+  }
+  return out;
+}
+const len = parts => parts.reduce((s, p) => s + p[0].length, 0);
+const NAME = [['Cláudio ', 400], ['Camargo', 700]];
+const nameHTML = (color, size, extra = '') => `<div class="c" style="top:${CY - size * 0.6}px;font-size:${size}px;color:${color};letter-spacing:-.02em;${extra}">${typed(NAME, 99)}</div>`;
+const mono = (txt, x, y, color, size = 10, align = 'left', extra = '') =>
+  `<div class="a mono" style="${align === 'right' ? `right:${W - x}px` : `left:${x}px`};top:${y}px;font-size:${size}px;color:${color};text-align:${align};${extra}">${txt}</div>`;
+const line = (x1, y1, x2, y2, col, w = 1) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="${w}"/>`;
+const svgWrap = inner => `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${inner}</svg>`;
+const node = (x, y, col, r = 3) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${col}" stroke-width="1"/>`;
+
+// silhouette (bust)
+const SIL = col => `<svg width="380" height="520" viewBox="0 0 380 520" style="position:relative">
+ <path fill="${col}" d="M190 10c-58 0-92 42-92 98 0 40 16 74 42 92l-4 34c-70 10-118 42-132 110L-10 520h400l-14-176c-14-68-62-100-132-110l-4-34c26-18 42-52 42-92 0-56-34-98-92-98z"/>
+</svg>`;
+
+// icons
+const ICON = {
+  pen: '<path d="M4 20l2-6L16 4l4 4-10 10z M14 6l4 4" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>',
+  move: '<path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>',
+  cursor: '<path d="M5 3l14 7-6 2-2 7z" fill="#fff"/>',
+  aa: '<rect x="1" y="3" width="22" height="18" rx="3" fill="#fff"/><text x="12" y="17" font-size="11" font-weight="700" text-anchor="middle" fill="#1E64A2" font-family="Inter">Aa</text>',
+  search: '<circle cx="10" cy="10" r="6" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M15 15l6 6" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>',
+  brush: '<path d="M20 3l1 1-9 10-2-2z" fill="#fff"/><path d="M9 13c-3 0-5 2-5 4s-1 3-2 3c4 1 9 0 9-4z" fill="#fff"/>',
+  eraser: '<path d="M3 16l9-9 7 7-6 6H7z" fill="#fff"/><path d="M8 11l7 7" stroke="#1E64A2" stroke-width="2"/>',
+  pin: '<path d="M14 2l8 8-3 1-4 5 1 4-2 1-11-11 1-2 4 1 5-4z" fill="#fff"/><path d="M7 17l-4 4" stroke="#fff" stroke-width="2"/>',
+  swap: '<path d="M4 8h15l-4-4M20 16H5l4 4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
+  undo: '<path d="M8 5L4 9l4 4M4 9h10a6 6 0 010 12h-4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
+  tri: '<path d="M12 4l9 16H3z" fill="#fff"/>',
+  sq: '<rect x="4" y="4" width="16" height="16" rx="2" fill="#fff"/>',
+  tbox: '<rect x="2" y="2" width="20" height="20" rx="3" fill="#fff"/><path d="M7 8h10M12 8v10" stroke="#1E64A2" stroke-width="2.6"/>',
+  focus: '<path d="M3 8V3h5M16 3h5v5M21 16v5h-5M8 21H3v-5" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="12" cy="12" r="4" fill="#fff"/>',
+  mirror: '<path d="M11 3v18L3 19zM13 3v18l8-2z" fill="#fff"/>',
+};
+const ICON_KEYS = Object.keys(ICON);
+const icon = (k, s = 1, op = 1, rot = 0) => `<span class="ic" style="opacity:${op};transform:scale(${s}) rotate(${rot}deg)"><svg viewBox="0 0 24 24">${ICON[k]}</svg></span>`;
+
+// =====================================================================
+// SCENES
+// =====================================================================
+
+// 0.00 – 1.00  black construction grid, first letter
+function sIntro(t) {
+  const g = 'rgba(255,255,255,.14)';
+  const kh = eo3(P(t, 0.0, 0.55)), kv = eo3(P(t, 0.15, 0.7));
+  const hx = 360 * kh, vy = 640 * kv;
+  let s = line(CX - hx, 590, CX + hx, 590, g) + line(CX - hx, 690, CX + hx, 690, g);
+  for (const x of [250, 330, 470]) s += line(x, CY - vy, x, CY + vy, g);
+  if (t > 0.4) for (const x of [250, 330, 470]) for (const y of [590, 690]) s += node(x, y, 'rgba(255,255,255,.35)', 2.5);
+  let txt = '';
+  if (t >= 0.72) txt = `<div class="c" style="top:574px;font-size:112px;font-weight:700;color:#fff;letter-spacing:-.04em">O${caret(t)}</div>`;
+  return { bg: C.ink, html: svgWrap(s) + txt };
+}
+
+// 1.00 – 2.25  "Olá." being typed over a drifting grid
+function sHello(t) {
+  const g = 'rgba(20,21,27,.16)', lt = t - 1.0;
+  const drift = lt * 14;
+  let s = line(0, 590, W, 590, g) + line(0, 690, W, 690, g);
+  for (const [x, d] of [[230, -1], [300, 1], [490, -1]]) s += line(x + d * drift, 0, x + d * drift, H, g);
+  for (const [x, d] of [[230, -1], [490, -1]]) for (const y of [590, 690]) s += node(x + d * drift, y, 'rgba(20,21,27,.4)', 2.5);
+  const labels = mono(`x ${Math.round(230 - drift)}`, 236 - drift, 572, 'rgba(20,21,27,.45)', 8) + mono('112 px', 236 - drift, 698, 'rgba(20,21,27,.45)', 8) + mono(`y 590`, 496 - drift, 572, 'rgba(20,21,27,.45)', 8) + mono('ascent', 496 - drift, 698, 'rgba(20,21,27,.45)', 8);
+  const n = lt < 0.28 ? 2 : 3;
+  const dot = lt >= 0.48 ? `<span style="color:${C.orange};display:inline-block;transform:scale(${eback(P(lt, .48, .66))})">.</span>` : '';
+  const sc = 1 + lt * 0.05;
+  const txt = `<div class="c" style="top:574px;font-size:112px;font-weight:700;color:${C.ink};letter-spacing:-.04em;transform:scale(${sc})">${'Olá'.slice(0, n)}${dot}${caret(t, lt < 0.48)}</div>`;
+  return { bg: C.paper, html: svgWrap(s) + labels + txt };
+}
+
+// 2.25 – 5.25  "Eu sou" → name typed → subtitle → silhouette → "Sou o seu"
+function sIntroduce(t) {
+  let h = '';
+  // "Eu sou" big → small on top
+  if (t < 4.55) {
+    const k = eio(P(t, 2.72, 3.0));
+    const size = lerp(112, 40, k), y = lerp(574, 452, k);
+    const pop = t < 2.45 ? lerp(1.12, 1, eo3(P(t, 2.25, 2.45))) : 1;
+    h += `<div class="c" style="top:${y}px;font-size:${size}px;font-weight:700;color:${C.ink};letter-spacing:-.035em;transform:scale(${pop})">Eu sou</div>`;
+  }
+  // name typed in, then deleted, then "Sou o seu"
+  let n = 0;
+  if (t >= 2.82 && t < 4.45) n = (t - 2.82) / 0.036;
+  else if (t >= 4.45) n = len(NAME) - (t - 4.45) / 0.014;
+  if (t >= 2.82 && t < 4.66) {
+    h += `<div class="c" style="top:604px;font-size:58px;color:${C.ink};letter-spacing:-.025em">${typed(NAME, n)}${caret(t, true)}</div>`;
+  }
+  if (t >= 4.66) {
+    const m = (t - 4.66) / 0.045;
+    h += `<div class="c" style="top:604px;font-size:58px;color:${C.ink};letter-spacing:-.025em">${typed([['Sou ', 700], ['o seu', 400]], m)}${caret(t)}</div>`;
+  }
+  // subtitle
+  if (t >= 3.45 && t < 4.45) {
+    const sub = 'Branding · Criação de site · Tráfego pago';
+    h += `<div class="c mono" style="top:690px;font-size:11px;color:rgba(20,21,27,.7)">${sub.slice(0, Math.floor((t - 3.45) / 0.011))}</div>`;
+  }
+  // silhouette
+  h += silhouette(t);
+  return { bg: C.paper, html: h };
+}
+function silhouette(t) {
+  if (t < 3.95 || t > 5.6) return '';
+  const up = eo5(P(t, 3.95, 4.35)), down = ei3(P(t, 5.05, 5.5));
+  const y = 780 + (1 - up) * 540 + down * 560;
+  return `<div class="a" style="left:170px;top:${y}px">${SIL(C.ink)}</div>`;
+}
+
+// 5.25 – 7.47  roles, one per beat, background flips
+const ROLES = [
+  { t: 5.25, bg: C.paper, fg: C.ink, a: 'Designer de', b: 'Marca', acc: 'sq' },
+  { t: 5.87, bg: C.ink, fg: '#fff', a: 'Criador de', b: 'Sites', acc: 'sq' },
+  { t: 6.40, bg: C.orange, fg: C.ink, a: 'Gestor de', b: 'Tráfego', acc: 'tri' },
+  { t: 6.93, bg: C.blue, fg: '#fff', a: 'Parceiro', b: 'Criativo', acc: 'plus' },
+];
+function sRoles(t) {
+  let i = 0; for (let k = 0; k < ROLES.length; k++) if (t >= ROLES[k].t) i = k;
+  const r = ROLES[i], lt = t - r.t;
+  const k = eo5(P(lt, 0.06, 0.26));
+  const y = lerp(70, 0, k);
+  const accCol = r.bg === C.orange ? '#fff' : C.orange;
+  const accShape = r.acc === 'tri' ? `<path d="M6 0l6 11H0z" fill="${accCol}"/>` : r.acc === 'plus' ? `<path d="M6 0v12M0 6h12" stroke="${accCol}" stroke-width="2.4"/>` : `<rect width="11" height="11" fill="${accCol}"/>`;
+  const as = eback(P(lt, 0.2, 0.38));
+  const acc = `<span style="display:inline-block;width:12px;height:12px;vertical-align:top;margin-left:6px;transform:scale(${as}) rotate(${(1 - as) * 90}deg)"><svg width="12" height="12" viewBox="0 0 12 12" style="position:relative">${accShape}</svg></span>`;
+  const muted = r.fg === '#fff' ? 'rgba(255,255,255,.55)' : 'rgba(20,21,27,.55)';
+  let h = mono('Função', 40, 430, muted, 9) + mono(`0${i + 1} / 04`, 680, 430, muted, 9, 'right');
+  h += `<div class="a" style="left:0;right:0;top:600px;height:80px;overflow:hidden"><div class="c" style="top:${8 + y}px;font-size:56px;color:${r.fg};letter-spacing:-.03em">${r.a} <b style="font-weight:700">${r.b}</b>${acc}</div></div>`;
+  if (i === 0) h += silhouette(t);
+  return { bg: r.bg, html: h };
+}
+
+// 7.47 – 8.53  name zooms out
+function sZoomOut(t) {
+  const k = eio(P(t, 7.55, 8.2));
+  const size = lerp(60, 20, k);
+  return { bg: C.paper, html: nameHTML(C.ink, size) };
+}
+
+// 8.53 – 14.98  "Criatividade é um jogo," → icons → "e sim, eu amo esse jogo." → "em jogo."
+function rings(t, col = 'rgba(255,255,255,.07)') {
+  const r = t * 6;
+  return svgWrap(`<g transform="rotate(${r} ${CX} ${CY})">` +
+    `<circle cx="${CX}" cy="${CY}" r="150" fill="none" stroke="${col}" stroke-width="1.2"/>` +
+    `<circle cx="${CX}" cy="${CY}" r="240" fill="none" stroke="${col}" stroke-width="1"/>` +
+    line(CX - 300, CY, CX + 300, CY, col) + line(CX, CY - 300, CX, CY + 300, col) +
+    `<circle cx="${CX}" cy="${CY - 150}" r="3" fill="${col}"/><circle cx="${CX + 150}" cy="${CY}" r="3" fill="${col}"/>` + '</g>');
+}
+function word(txt, show, hi, extra = '') {
+  if (!show) return '';
+  return `<span class="w${hi ? ' br' : ''}" style="color:${hi ? C.sand : '#fff'};${extra}">${txt}</span>`;
+}
+const ICON_ROW1 = ['pen', 'move', 'cursor', 'aa'], ICON_ROW2 = ['eraser', 'pin', 'swap', 'undo'];
+function cycleRow(base, t, t0, phase) {
+  // swap one icon each 0.27s
+  const steps = Math.floor(Math.max(0, t - t0) / 0.27);
+  return base.map((k, j) => ICON_KEYS[(ICON_KEYS.indexOf(k) + Math.floor((steps + j * 2 + phase) / 4)) % ICON_KEYS.length]);
+}
+function sCreativity(t) {
+  let h = rings(t);
+  const fs = 44, lh = 54;
+  const textBlock = (l1, l2, extra = '') => `<div class="c" style="top:${CY - lh}px;font-size:${fs}px;line-height:${lh}px;color:#fff;letter-spacing:-.02em;${extra}">${l1}<br>${l2}</div>`;
+  if (t < 10.17) {
+    const tw = [8.53, 8.86, 9.18, 9.5];
+    const vis = tw.map(x => t >= x), hi = tw.map((x, i) => t >= x && t < x + 0.3);
+    h += textBlock(word('Criatividade', vis[0], hi[0]) + ' ' + word('é', vis[1], hi[1]), word('um', vis[2], hi[2]) + ' ' + word('jogo,', vis[3], hi[3]));
+  } else if (t < 11.24) {
+    const pop = k => eback(P(t, k, k + 0.18));
+    const row = t >= 10.17 ? ICON_ROW1.map((k, j) => icon(k, pop(10.17 + j * 0.04))).join('') : '';
+    const umPart = t < 10.7 ? word('um', true, false) + ' ' : `<span class="w">${icon('swap', pop(10.7))}${icon('mirror', pop(10.74))}</span> `;
+    h += textBlock(`${row} ${word('é', true, false)}`, umPart + word('jogo,', true, false));
+  } else if (t < 13.24) {
+    const k = eo3(P(t, 11.24, 11.4));
+    const fall = j => t > 12.84 + j * 0.06 ? ei3(P(t, 12.84 + j * 0.06, 13.1 + j * 0.06)) : 0;
+    const r1 = cycleRow(ICON_ROW1, t, 11.24, 0).map((key, j) => icon(key, eback(P(t, 11.24 + j * 0.05, 11.42 + j * 0.05)) * (1 - fall(j)), 1 - fall(j))).join('');
+    const r2 = cycleRow(ICON_ROW2, t, 11.24, 2).map((key, j) => icon(key, eback(P(t, 11.3 + j * 0.05, 11.48 + j * 0.05)) * (1 - fall(j + 4)), 1 - fall(j + 4))).join('');
+    h += `<div class="c" style="top:${CY - 72}px;transform:translateY(${(1 - k) * 20}px)">${r1}</div>`;
+    h += `<div class="c" style="top:${CY - 28}px;font-size:${fs}px;color:#fff;letter-spacing:-.02em">jogo</div>`;
+    h += `<div class="c" style="top:${CY + 44}px;transform:translateY(${(1 - k) * -20}px)">${r2}</div>`;
+  } else if (t < 14.25) {
+    const blur = lerp(10, 0, eo3(P(t, 13.24, 13.62))), op = lerp(.25, 1, eo3(P(t, 13.24, 13.62)));
+    const l1op = 1 - P(t, 13.95, 14.2);
+    h += textBlock(`<span style="opacity:${l1op}">e sim, eu amo</span>`, `<span style="opacity:${l1op}">esse</span> <b style="font-weight:700;display:inline-block;filter:blur(${blur}px);opacity:${op}">jogo.</b>`);
+  } else {
+    // "em jogo." centred → shrinks to the left
+    const k = eio(P(t, 14.62, 14.98));
+    const size = lerp(52, 22, k), x = lerp(CX, 40, k);
+    const dot = `<span style="display:inline-block;width:${lerp(0, 7, k)}px;height:${lerp(0, 7, k)}px;border-radius:50%;background:${C.orange};margin-left:${lerp(0, 8, k)}px;vertical-align:middle"></span>`;
+    const pop = lerp(1.15, 1, eo3(P(t, 14.25, 14.4)));
+    h += `<div class="a" style="left:${x}px;top:${CY - size * 0.62}px;font-size:${size}px;font-weight:700;color:#fff;letter-spacing:-.02em;white-space:nowrap;transform:translateX(${-50 * (1 - k)}%) scale(${pop})">em jogo${k < .5 ? '.' : ''}${dot}</div>`;
+  }
+  return { bg: C.blue, html: h };
+}
+
+// 14.98 – 21.33  rotating list of services, one step per beat
+const SERV = ['Branding', 'Identidade Visual', 'Criação de Sites', 'Landing Pages', 'SEO', 'Google Ads', 'Meta Ads', 'Tráfego Pago', 'Social Media', 'Design Gráfico', 'E-mail Marketing', 'Estratégia Digital'];
+const STEP_BEATS = [15.51, 16.04, 16.58, 17.11, 17.65, 18.18, 18.72, 19.25, 19.78, 20.32];
+function sServices(t) {
+  let pos = 2;
+  for (const b of STEP_BEATS) pos += eo5(P(t, b - 0.04, b + 0.2));
+  const final = t >= 20.32;
+  let h = rings(t, 'rgba(255,255,255,.05)');
+  h += mono('Serviços', 40, 190, 'rgba(255,255,255,.5)', 9) + mono('12', 680, 190, 'rgba(255,255,255,.5)', 9, 'right');
+  const dotS = final ? 1 + 0.6 * Math.max(0, 1 - (t - 20.32) / 0.3) : 1;
+  h += `<div class="a" style="left:40px;top:625px;font-size:24px;font-weight:700;color:#fff;letter-spacing:-.02em;white-space:nowrap">em jogo<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${C.orange};margin-left:8px;vertical-align:middle;transform:scale(${dotS * 1.3})"></span></div>`;
+  let items = '';
+  const N = SERV.length;
+  for (let i = -5; i <= 5; i++) {
+    const idx = Math.round(pos) + i;
+    const d = idx - pos;              // distance from the active slot
+    const a = d * 0.36;                // radians on the drum
+    if (Math.abs(a) > 1.5) continue;
+    const y = Math.sin(a) * 140, sy = Math.cos(a), op = Math.pow(Math.cos(a), 2.4);
+    const active = Math.abs(d) < 0.5;
+    const col = active ? (final ? C.orange : '#fff') : `rgba(255,255,255,${0.5 * op})`;
+    items += `<div class="a" style="left:0;top:${y - 17}px;font-size:30px;color:${col};white-space:nowrap;letter-spacing:-.01em;transform:scaleY(${sy});font-weight:${active ? 500 : 400}">${SERV[((idx % N) + N) % N]}</div>`;
+  }
+  h += `<div class="a" style="left:185px;top:${CY}px;transform:rotate(-5deg) skewX(-6deg);transform-origin:0 0">${items}</div>`;
+  if (t >= 20.45) h += mono('Cláudio Camargo', 40, 1085, 'rgba(255,255,255,.5)', 9) + mono('02 / 12', 680, 1085, 'rgba(255,255,255,.5)', 9, 'right');
+  return { bg: C.blue, html: h };
+}
+
+// 21.33 – 25.47  brand montage: one card every 4 frames
+const D = {
+  circles(lt, bg, fg, st) {
+    const g = st; let s = '';
+    const r = 140 + lt * 30;
+    for (const [x, y] of [[CX, CY - r], [CX, CY + r], [CX - r, CY], [CX + r, CY]]) s += `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${g}" stroke-width="1.2"/>`;
+    for (const [x, y] of [[CX - r * .7, CY - r * .7], [CX + r * .7, CY - r * .7], [CX - r * .7, CY + r * .7], [CX + r * .7, CY + r * .7], [CX, CY - r * 2], [CX, CY + r * 2]]) s += `<rect x="${x - 3}" y="${y - 3}" width="6" height="6" transform="rotate(45 ${x} ${y})" fill="${g}"/>`;
+    return { bg, html: svgWrap(s) + nameHTML(fg, 34) };
+  },
+  vline(lt) {
+    const g = 'rgba(20,21,27,.5)';
+    const k = eo3(cl(lt / 0.12));
+    let s = line(CX, CY - 40 - 180 * k, CX, CY - 40, g) + line(CX, CY + 40, CX, CY + 40 + 180 * k, g) + node(CX, CY - 40 - 180 * k, g, 4) + `<circle cx="${CX}" cy="${CY + 40 + 180 * k}" r="4" fill="${C.ink}"/>`;
+    return { bg: C.paper, html: svgWrap(s) + mono('topo', CX - 14, CY - 245, g, 8) + mono('base', CX - 14, CY + 232, g, 8) + nameHTML(C.ink, 34) };
+  },
+  palette(lt, set) {
+    const shift = -lt * 260;
+    let h = '';
+    let y = 150 + shift;
+    set.forEach(([nm, hex, fg, name], i) => {
+      h += `<div class="a" style="left:0;right:0;top:${y}px;height:250px;background:${hex}">` +
+        mono(nm, 24, 18, fg, 9) + mono(`hex ${hex}<br>rgb<br>cmyk<br>pantone`, 696, 18, fg, 8, 'right', 'line-height:1.35') +
+        `<div class="a" style="right:24px;bottom:16px;color:${fg};font-size:16px;letter-spacing:2px">•••</div>` +
+        (name ? `<div class="c" style="top:100px;font-size:34px;color:${name};letter-spacing:-.02em">${typed(NAME, 99)}</div>` : '') + '</div>';
+      y += 250;
+    });
+    return { bg: set[0][1], html: h };
+  },
+  halftone(lt) {
+    let s = `<defs><linearGradient id="fan" x1="0" x2="1"><stop offset="0" stop-color="${C.blue}" stop-opacity=".9"/><stop offset="1" stop-color="${C.blue}" stop-opacity="0"/></linearGradient></defs>`;
+    for (let i = -6; i <= 6; i++) s += `<path d="M120 ${CY} L560 ${CY + i * 44 - 12} L560 ${CY + i * 44 + 12} Z" fill="url(#fan)" opacity="${0.5 - Math.abs(i) * 0.06}"/>`;
+    for (let c = 0; c < 3; c++) for (let r = -9; r <= 9; r++) { const rad = (10 - Math.abs(r)) * (0.9 - c * 0.22) + lt * 6; s += `<circle cx="${610 + c * 42}" cy="${CY + r * 40}" r="${Math.max(1.5, rad)}" fill="${C.deep}"/>`; }
+    return { bg: C.paper, html: svgWrap(s) + nameHTML(C.ink, 34) };
+  },
+  grid(lt, bg = C.ink, fg = '#fff', g = 'rgba(255,255,255,.18)') {
+    let s = '';
+    for (const x of [150, 230, 490, 570]) s += line(x, 0, x, H, g);
+    s += `<rect x="225" y="${CY - 150}" width="270" height="300" fill="none" stroke="${g}"/>`;
+    for (const [x, y] of [[225, CY - 150], [495, CY - 150], [225, CY + 150], [495, CY + 150]]) s += node(x, y, g, 4);
+    s += `<circle cx="${760 - lt * 120}" cy="${CY}" r="220" fill="none" stroke="${g}"/>` + line(110, CY, 200, CY, g);
+    return { bg, html: svgWrap(s) + mono('tipografia', 40, CY - 5, g, 7) + nameHTML(fg, 34) };
+  },
+  poster(lt, bg, fg, strip) {
+    let dashes = '';
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 14; c++) dashes += `<rect x="${24 + c * 50 + ((r % 2) * 25) - lt * 120}" y="${1010 + r * 34}" width="34" height="12" rx="6" fill="${strip}" opacity=".7"/>`;
+    return { bg, html: `<div class="a" style="left:0;right:0;top:980px;bottom:0;background:${C.paper}"></div>` + svgWrap(dashes) +
+      mono('boas ideias merecem<br>uma direção.', 40, 360, fg, 10, 'left', 'line-height:1.5') + nameHTML(fg, 36) + mono('branding · sites · tráfego — 2026', 40, 900, fg, 9) };
+  },
+  card3d(lt, bg, card, dots, fg) {
+    const rz = -28 + lt * 40;
+    let c = '';
+    for (const [x, y, r] of [[80, 70, 40], [330, 330, 55], [420, 120, 34], [60, 360, 30]]) c += `<div class="a" style="left:${x - r}px;top:${y - r}px;width:${r * 2}px;height:${r * 2}px;border-radius:50%;background:${dots}"></div>`;
+    return { bg, html: `<div class="a" style="left:120px;top:${CY - 250}px;width:480px;height:500px;perspective:900px"><div class="a" style="inset:0;background:${card};transform:rotateX(48deg) rotateZ(${rz}deg);box-shadow:0 40px 80px rgba(0,0,0,.35)">${c}</div></div>` + nameHTML(fg, 36, 'z-index:5;transform:translateZ(200px)') };
+  },
+  darkcard(lt) {
+    const y = lerp(30, 0, eo3(cl(lt / 0.12)));
+    return { bg: `linear-gradient(180deg, ${C.deep} 0%, ${C.blue} 100%)`, html: `<div class="a" style="left:110px;top:${CY - 150 + y}px;width:500px;height:300px;background:${C.ink};border-radius:6px;box-shadow:0 40px 90px rgba(0,0,0,.5)">` +
+      mono('criativo & direção', 22, 18, 'rgba(255,255,255,.5)', 8) + mono('2026', 478, 18, 'rgba(255,255,255,.5)', 8, 'right') + mono('marca · site · tráfego', 478, 268, 'rgba(255,255,255,.5)', 8, 'right') +
+      `<div class="a" style="left:22px;top:270px;width:6px;height:6px;border-radius:50%;background:${C.orange}"></div></div>` + nameHTML('#fff', 34) };
+  },
+  outlined(lt, bg, fg, st) {
+    const pad = lerp(40, 22, eo3(cl(lt / 0.12)));
+    let s = `<rect x="${200 - pad}" y="${CY - 34 - pad / 2}" width="${320 + pad * 2}" height="${68 + pad}" fill="none" stroke="${st}" stroke-width="1.4"/>`;
+    for (const [x, y] of [[200 - pad, CY - 34 - pad / 2], [520 + pad, CY - 34 - pad / 2], [200 - pad, CY + 34 + pad / 2], [520 + pad, CY + 34 + pad / 2]]) s += `<rect x="${x - 3}" y="${y - 3}" width="6" height="6" fill="${bg}" stroke="${st}"/>`;
+    return { bg, html: svgWrap(s) + `<div class="c mono" style="top:${CY - 160}px;font-size:8px;color:${st}">marca 2026</div>` + nameHTML(fg, 34) + `<div class="c" style="top:${CY + 150}px;color:${fg};font-size:10px;letter-spacing:4px">● ○ ○ ○</div>` };
+  },
+};
+const PAL_WARM = [['Laranja vivo', C.orange, C.ink], ['Areia', C.sand, C.ink, C.orange], ['Manhã', C.morning, C.ink], ['Tinta', C.ink, '#fff']];
+const PAL_COOL = [['Azul digital', C.blue, '#fff'], ['Azul profundo', C.deep, '#fff', '#fff'], ['Tinta', C.ink, '#fff'], ['Manhã', C.morning, C.ink]];
+const SEQ = [
+  lt => D.circles(lt, C.orange, C.ink, 'rgba(20,21,27,.35)'),
+  lt => D.vline(lt),
+  lt => D.palette(lt, PAL_WARM),
+  lt => D.palette(lt, PAL_COOL),
+  lt => D.halftone(lt),
+  lt => D.grid(lt),
+  lt => D.poster(lt, C.blue, '#fff', C.blue),
+  lt => D.card3d(lt, `linear-gradient(160deg, #23252e, ${C.ink})`, C.blue, C.morning, '#fff'),
+  lt => D.darkcard(lt),
+  lt => D.outlined(lt, C.blue, '#fff', 'rgba(255,255,255,.7)'),
+  lt => D.circles(lt, C.blue, '#fff', 'rgba(255,255,255,.35)'),
+  lt => D.palette(lt, PAL_WARM),
+  lt => D.poster(lt, C.orange, C.ink, C.ink),
+  lt => D.card3d(lt, C.paper, C.orange, C.ink, C.ink),
+  lt => D.outlined(lt, C.orange, C.ink, C.ink),
+  lt => D.grid(lt, C.paper, C.ink, 'rgba(20,21,27,.2)'),
+  lt => D.halftone(lt),
+  lt => D.palette(lt, PAL_COOL),
+  lt => D.circles(lt, C.orange, C.ink, 'rgba(20,21,27,.35)'),
+  lt => D.vline(lt),
+  lt => D.poster(lt, C.blue, '#fff', C.blue),
+  lt => D.darkcard(lt),
+  lt => D.outlined(lt, C.blue, '#fff', 'rgba(255,255,255,.7)'),
+  lt => D.palette(lt, PAL_WARM),
+  lt => D.card3d(lt, `linear-gradient(160deg, #23252e, ${C.ink})`, C.blue, C.morning, '#fff'),
+  lt => D.circles(lt, C.blue, '#fff', 'rgba(255,255,255,.35)'),
+  lt => D.palette(lt, PAL_COOL),
+  lt => D.poster(lt, C.orange, C.ink, C.ink),
+  lt => D.outlined(lt, C.orange, C.ink, C.ink),
+  lt => D.halftone(lt),
+  lt => D.grid(lt),
+];
+const M0 = 21.333, MSTEP = 4 / 30;
+function sMontage(t) {
+  const i = Math.min(SEQ.length - 1, Math.floor((t - M0) / MSTEP));
+  return SEQ[i]((t - M0) - i * MSTEP);
+}
+
+// 25.47 – 25.75  beige construction beats
+function sBridge(t) {
+  return t < 25.6 ? D.vline(t - 25.47) : D.grid(t - 25.6, C.paper, C.ink, 'rgba(20,21,27,.2)');
+}
+
+// 25.75 – 30.0  end card
+function sEnd(t) {
+  const g = 'rgba(255,255,255,.12)';
+  const k = eo5(P(t, 25.75, 26.4));
+  const size = lerp(24, 48, k);
+  const lift = lerp(0, 14, eio(P(t, 26.4, 26.7)));
+  let h = `<div class="c" style="top:${CY - size * 0.6 - lift}px;font-size:${size}px;color:#fff;letter-spacing:-.025em">${typed(NAME, 99)}</div>`;
+  const sub = 'Branding · Criação de sites · Tráfego pago';
+  if (t >= 26.45) h += `<div class="c mono" style="top:${CY + 22}px;font-size:10px;color:rgba(255,255,255,.55)">${sub.slice(0, Math.floor((t - 26.45) / 0.012))}</div>`;
+  let s = '';
+  const hk = eo3(P(t, 27.1, 27.6));
+  s += line(CX - 360 * hk, CY - 40, CX + 360 * hk, CY - 40, g) + line(CX - 360 * hk, CY + 10, CX + 360 * hk, CY + 10, g);
+  [40, 196, 524, 680].forEach((x, i) => { const v = eo3(P(t, 27.35 + i * 0.12, 28.2 + i * 0.12)); s += line(x, 0, x, H * v, g); if (v > .5) s += node(x, CY - 40, 'rgba(255,255,255,.3)', 3) + node(x, CY + 10, 'rgba(255,255,255,.3)', 3); });
+  if (t > 27.6) h += mono('x 196', 202, CY - 58, 'rgba(255,255,255,.3)', 7) + mono('x 524', 530, CY - 58, 'rgba(255,255,255,.3)', 7) + mono('cap', 202, CY + 16, 'rgba(255,255,255,.3)', 7);
+  const fade = P(t, 29.3, 29.85);
+  h = svgWrap(s) + h + `<div class="a" style="inset:0;background:#000;opacity:${fade}"></div>`;
+  return { bg: C.ink, html: h };
+}
+
+// =====================================================================
+const TIMELINE = [
+  [0, sIntro], [1.0, sHello], [2.25, sIntroduce], [5.25, sRoles], [7.47, sZoomOut],
+  [8.53, sCreativity], [14.98, sServices], [21.333, sMontage], [25.47, sBridge], [25.75, sEnd],
+];
+const stage = document.getElementById('stage');
+window.render = function (t) {
+  let f = TIMELINE[0][1];
+  for (const [t0, fn] of TIMELINE) if (t >= t0) f = fn;
+  const { bg, html } = f(t);
+  stage.style.background = bg;
+  stage.innerHTML = html;
+};
+window.ready = document.fonts.ready.then(() => { window.render(0); return true; });
+</script>
+</body>
+</html>
