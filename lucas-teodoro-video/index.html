@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Caso Lucas Teodoro</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 720px; height: 1280px; overflow: hidden; background: #0D1119; font-family: 'Inter Display', 'Inter', sans-serif; color: #F2EEE6; -webkit-font-smoothing: antialiased; }
+#stage { position: absolute; inset: 0; overflow: hidden; }
+.a { position: absolute; left: 56px; right: 56px; }
+.mono { font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .18em; font-weight: 500; }
+.w { display: inline-block; will-change: transform; }
+.hl { color: #F5B83D; }
+.neg { color: #FF6B57; }
+.lbl { font-size: 17px; color: #F5B83D; display: flex; align-items: center; gap: 12px; }
+.lbl i { display: inline-block; width: 26px; height: 2px; background: #F5B83D; }
+.h1 { font-weight: 800; letter-spacing: -.025em; line-height: 1.02; }
+.h2 { font-weight: 700; letter-spacing: -.015em; line-height: 1.12; }
+.p  { font-weight: 400; line-height: 1.38; color: #C9C4BA; font-family: 'Inter', sans-serif; }
+.card { background: #161C28; border: 1px solid #263044; border-radius: 22px; padding: 26px 28px; }
+.badge { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 15px; letter-spacing: .14em; font-weight: 700; padding: 7px 12px; border-radius: 8px; }
+.row { display: flex; gap: 18px; align-items: baseline; padding: 18px 0; border-top: 1px solid #263044; }
+.row .k { width: 120px; flex: none; font-size: 15px; color: #8C93A3; }
+.row .v { font-size: 27px; font-weight: 600; }
+.chk { width: 40px; height: 40px; border-radius: 12px; flex: none; display: flex; align-items: center; justify-content: center; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+const C = { bg: '#0D1119', ink: '#F2EEE6', mute: '#C9C4BA', dim: '#8C93A3', amber: '#F5B83D', coral: '#FF6B57', teal: '#4FD1B5', line: '#263044', card: '#161C28' };
+const W = 720, H = 1280;
+
+// ---------- math ----------
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const P = (t, a, b) => cl((t - a) / (b - a));
+const eo3 = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const eback = x => { const c1 = 1.7, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+
+// ---------- helpers ----------
+// reveal style: fade + rise
+const rv = (lt, t0, d = .55, dy = 26) => { const k = eo3(P(lt, t0, t0 + d)); return `opacity:${k};transform:translateY(${(1 - k) * dy}px)`; };
+// word-by-word reveal; *palavras* entre asteriscos = destaque, ~palavras~ = negativo
+function words(text, lt, t0, step = .05) {
+  let mode = '', out = '', i = 0;
+  for (let w of text.split(' ')) {
+    let m = mode;
+    if (w.startsWith('*')) { w = w.slice(1); m = mode = 'hl'; }
+    else if (w.startsWith('~')) { w = w.slice(1); m = mode = 'neg'; }
+    if (w.includes('*') || w.includes('~')) { w = w.replace(/[*~]/, ''); mode = ''; }
+    const k = eo3(P(lt, t0 + i * step, t0 + i * step + .5));
+    out += `<span class="w ${m}" style="opacity:${k};transform:translateY(${(1 - k) * 20}px)">${w}</span> `;
+    i++;
+  }
+  return out;
+}
+const label = (txt, lt, t0 = 0) => `<div class="a lbl mono" style="top:150px;${rv(lt, t0, .5, 12)}"><i style="width:${26 * eo3(P(lt, t0, t0 + .6))}px"></i>${txt}</div>`;
+const checkSVG = (k, col) => `<svg width="22" height="22" viewBox="0 0 22 22"><path d="M4 11.5 L9 16 L18 6" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24" stroke-dashoffset="${24 * (1 - k)}"/></svg>`;
+
+// ---------- scenes ----------
+const SCENES = [];
+const scene = (d, f) => SCENES.push({ d, f });
+
+// 0 — gancho
+scene(6.5, lt => {
+  const sk = eback(P(lt, 2.9, 3.35)), so = P(lt, 2.9, 3.05);
+  return `
+  <div class="a mono" style="top:300px;font-size:17px;color:${C.dim};${rv(lt, .1, .5, 10)}">Circula nas redes</div>
+  <div class="a h1" style="top:345px;font-size:66px;">${words('“Rapaz é ~preso~ na faculdade por pregar Jesus”', lt, .3, .09)}</div>
+  <div class="a" style="top:690px;display:flex;justify-content:center;">
+    <div style="opacity:${so};transform:rotate(-5deg) scale(${1.6 - .6 * sk});border:5px solid ${C.coral};color:${C.coral};border-radius:14px;padding:14px 26px;font-weight:900;font-size:50px;letter-spacing:.01em;">NÃO FOI BEM ASSIM</div>
+  </div>
+  <div class="a h2" style="top:880px;font-size:30px;color:${C.mute};text-align:center;">${words('Entenda o caso de *Lucas Teodoro* na UFMG', lt, 4.0, .07)}</div>`;
+});
+
+// 1 — quem é
+scene(7.5, lt => `
+  ${label('01 · Quem é', lt)}
+  <div class="a h1" style="top:210px;font-size:84px;">${words('Lucas Teodoro', lt, .2, .12)}</div>
+  <div class="a p" style="top:410px;font-size:30px;">${words('Líder do *Aviva Universitário*, movimento evangélico que promove encontros de oração e evangelização em universidades.', lt, .9, .045)}</div>
+  <div class="a" style="top:660px;">
+    ${[['Onde', 'UFMG · campus Pampulha, BH'], ['Local', 'Praça de Serviços'], ['Quando', 'Junho de 2025']].map((r, i) =>
+      `<div class="row" style="${rv(lt, 2.6 + i * .35)}"><div class="k mono">${r[0]}</div><div class="v">${r[1]}</div></div>`).join('')}
+  </div>`);
+
+// 2 — o encontro
+scene(7.5, lt => `
+  ${label('02 · O encontro', lt)}
+  <div class="a h2" style="top:220px;font-size:52px;">${words('Estudantes se reuniram no campus para *orar,* *cantar* e *se ajoelhar.*', lt, .2, .07)}</div>
+  <div class="a card" style="top:560px;${rv(lt, 2.4)}">
+    <div style="font-size:90px;line-height:.6;color:${C.amber};font-weight:800;height:44px;">“</div>
+    <div class="h2" style="font-size:34px;">${words('Era voluntário e sem equipamento de som.', lt, 2.6, .06)}</div>
+    <div class="mono" style="margin-top:22px;font-size:14px;color:${C.dim};${rv(lt, 3.8, .5, 8)}">— Lucas Teodoro</div>
+  </div>
+  <div class="a p" style="top:900px;font-size:24px;${rv(lt, 4.6)}">⚠ Essa é a <b style="color:${C.ink}">versão dos organizadores</b>, não uma conclusão independente.</div>`);
+
+// 3 — a denúncia
+scene(9.5, lt => {
+  const ak = eio(P(lt, 2.0, 2.8));
+  return `
+  ${label('03 · A denúncia', lt)}
+  <div class="a h2" style="top:210px;font-size:46px;">${words('Uma associação levou o caso ao *Ministério Público Federal.*', lt, .2, .07)}</div>
+  <div class="a" style="top:440px;height:120px;">
+    <div style="position:absolute;left:0;top:0;width:270px;height:110px;${rv(lt, 1.3)}" class="card"><div class="mono" style="font-size:13px;color:${C.dim}">Denunciante</div><div style="font-size:23px;font-weight:700;margin-top:8px;line-height:1.15">Movimento Brasil Laico</div></div>
+    <svg style="position:absolute;left:278px;top:40px" width="62" height="30"><path d="M4 15 H${4 + 46 * ak}" stroke="${C.amber}" stroke-width="3" stroke-linecap="round"/><path d="M42 6 L54 15 L42 24" fill="none" stroke="${C.amber}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="${P(lt, 2.6, 2.8)}"/></svg>
+    <div style="position:absolute;right:0;top:0;width:262px;height:110px;${rv(lt, 2.7)}" class="card"><div class="mono" style="font-size:13px;color:${C.dim}">Destino</div><div style="font-size:23px;font-weight:700;margin-top:8px;line-height:1.15">MPF</div></div>
+  </div>
+  <div class="a mono" style="top:620px;font-size:15px;color:${C.dim};${rv(lt, 3.4, .5, 8)}">Principais argumentos</div>
+  <div class="a" style="top:660px;">
+    ${[['Laicidade', 'O Estado não pode subvencionar cultos (art. 19, I)'], ['“Subvenção indireta”', 'Ceder espaço e segurança seria apoio material'], ['Igualdade', 'Risco de favorecer uma crença sobre as demais']].map((r, i) =>
+      `<div class="row" style="${rv(lt, 3.8 + i * .7)}"><div class="v" style="font-size:24px;flex:1"><span style="color:${C.amber}">${r[0]}</span><div class="p" style="font-size:21px;margin-top:4px;font-weight:400">${r[1]}</div></div></div>`).join('')}
+  </div>`;
+});
+
+// 4 — foi preso?
+scene(7, lt => {
+  const nk = eback(P(lt, .3, .8));
+  return `
+  ${label('04 · Ele foi preso?', lt)}
+  <div class="a h1" style="top:230px;font-size:190px;color:${C.coral};opacity:${P(lt, .3, .45)};transform:scale(${.6 + .4 * nk});transform-origin:left center;">Não.</div>
+  <div class="a h2" style="top:500px;font-size:46px;">${words('Lucas foi *intimado* a prestar esclarecimentos ao MPF.', lt, 1.4, .07)}</div>
+  <div class="a" style="top:760px;display:flex;gap:16px;align-items:center;${rv(lt, 3.6)}">
+    <div class="card h2" style="font-size:34px;padding:20px 26px;">Intimação</div>
+    <div class="h1" style="font-size:60px;color:${C.coral}">≠</div>
+    <div class="card h2" style="font-size:34px;padding:20px 26px;">Prisão</div>
+  </div>`;
+});
+
+// 5 — duas frentes
+scene(14, lt => `
+  ${label('05 · Duas frentes no MPF', lt)}
+  <div class="a card" style="top:205px;${rv(lt, .3)}">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="mono" style="font-size:16px;color:${C.dim}">Frente criminal</div>
+      <div class="badge" style="background:${C.coral};color:#1A0C0A;opacity:${P(lt, 1.0, 1.15)};transform:scale(${1 + .4 * (1 - eback(P(lt, 1.0, 1.4)))})">ARQUIVADA</div>
+    </div>
+    <div class="h2" style="font-size:27px;margin-top:18px;line-height:1.3;font-weight:500;">${words('“O incômodo sonoro e a ocupação não autorizada de espaço público, embora configurem infrações administrativas, ~não possuem a relevância penal~ necessária para a persecução criminal federal.”', lt, 1.4, .055)}</div>
+    <div class="mono" style="margin-top:16px;font-size:13px;color:${C.dim};${rv(lt, 3.6, .5, 6)}">— Nota do MPF</div>
+  </div>
+  <div class="a card" style="top:640px;${rv(lt, 6.4)};border-color:${C.amber}55">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="mono" style="font-size:16px;color:${C.dim}">Frente civil</div>
+      <div class="badge" style="background:${C.amber};color:#1D1404;opacity:${P(lt, 7.0, 7.15)};transform:scale(${1 + .4 * (1 - eback(P(lt, 7.0, 7.4)))})">CONTINUA</div>
+    </div>
+    <div class="p" style="font-size:25px;margin-top:16px;color:${C.ink}">${words('Após recurso, a subprocuradora-geral *Mônica Nicida Garcia* considerou *prematuro* encerrar a apuração.', lt, 7.4, .05)}</div>
+    <div class="p" style="font-size:21px;margin-top:14px;">${words('O inquérito civil apura laicidade, liberdade de crença dos demais estudantes e regras de uso do espaço público.', lt, 9.6, .045)}</div>
+  </div>`);
+
+// 6 — organização criminosa?
+scene(8, lt => `
+  ${label('06 · “Organização criminosa”?', lt)}
+  <div class="a h2" style="top:220px;font-size:46px;">${words('Lucas afirmou nas redes que o grupo foi *chamado* de “organização criminosa”.', lt, .2, .065)}</div>
+  <div class="a h2" style="top:520px;font-size:46px;">${words('Mas as fontes ~não~ ~mostram~ uma acusação formal do MPF por esse crime.', lt, 2.6, .065)}</div>
+  <div class="a" style="top:820px;display:flex;gap:16px;align-items:center;${rv(lt, 5.0)}">
+    <div class="card h2" style="font-size:28px;padding:18px 22px;">Uma fala</div>
+    <div class="h1" style="font-size:54px;color:${C.coral}">≠</div>
+    <div class="card h2" style="font-size:28px;padding:18px 22px;">Acusação formal</div>
+  </div>`);
+
+// 7 — o que diz a lei
+scene(10, lt => `
+  ${label('07 · O que diz a lei', lt)}
+  <div class="a card" style="top:210px;${rv(lt, .3)}">
+    <div class="badge" style="background:${C.teal}22;color:${C.teal}">CONSTITUIÇÃO · ART. 5º, VI</div>
+    <div class="h2" style="font-size:32px;margin-top:16px;">${words('Liberdade de crença e de culto é *inviolável.*', lt, .6, .06)}</div>
+    <div class="p" style="font-size:22px;margin-top:10px;${rv(lt, 1.6)}">Protege os <b style="color:${C.ink}">estudantes</b> que manifestam sua fé.</div>
+  </div>
+  <div class="a card" style="top:500px;${rv(lt, 2.6)}">
+    <div class="badge" style="background:${C.amber}22;color:${C.amber}">CONSTITUIÇÃO · ART. 19, I</div>
+    <div class="h2" style="font-size:32px;margin-top:16px;">${words('O poder público não pode estabelecer nem subvencionar cultos.', lt, 2.9, .06)}</div>
+    <div class="p" style="font-size:22px;margin-top:10px;${rv(lt, 4.0)}">Limita a <b style="color:${C.ink}">instituição</b> — a universidade.</div>
+  </div>
+  <div class="a h2" style="top:830px;font-size:36px;text-align:center;">${words('A laicidade vale para a *universidade,* não para a fé dos *alunos.*', lt, 5.6, .07)}</div>`);
+
+// 8 — resumo
+scene(10.5, lt => `
+  ${label('Em resumo', lt)}
+  <div class="a" style="top:210px;">
+    ${[['Intimação — não prisão', C.coral], ['Frente criminal arquivada', C.coral], ['Inquérito civil continuou', C.amber], ['Sem desfecho definitivo confirmado (até out/2026)', C.teal]].map((r, i) => {
+      const t0 = .4 + i * .7;
+      return `<div class="row" style="align-items:center;padding:22px 0;${rv(lt, t0)}"><div class="chk" style="background:${r[1]}22">${checkSVG(eo3(P(lt, t0 + .25, t0 + .7)), r[1])}</div><div class="v" style="font-size:30px;line-height:1.2">${r[0]}</div></div>`;
+    }).join('')}
+  </div>
+  <div class="a h1" style="top:760px;font-size:50px;">${words('Antes de compartilhar, *confira a fonte.*', lt, 3.9, .08)}</div>
+  <div class="a mono" style="top:960px;font-size:13px;line-height:1.8;color:${C.dim};${rv(lt, 5.4, .6, 8)}">Fontes: Gazeta do Povo · Parecer IBDR ·<br>MPF · Constituição Federal</div>`);
+
+// ---------- timeline ----------
+let acc = 0; for (const s of SCENES) { s.t0 = acc; acc += s.d; }
+window.TOTAL = acc;
+
+function background(t, si) {
+  const gx = 360 + 180 * Math.sin(t * .23), gy = 420 + 220 * Math.cos(t * .17);
+  const num = si >= 1 && si <= 7 ? String(si).padStart(2, '0') : '';
+  return `
+  <div style="position:absolute;inset:0;background:radial-gradient(620px 620px at ${gx}px ${gy}px, #1B2A45 0%, rgba(13,17,25,0) 70%);"></div>
+  <div style="position:absolute;inset:0;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:60px 60px;background-position:0 ${-(t * 6) % 60}px;"></div>
+  <div class="h1" style="position:absolute;right:-20px;bottom:150px;font-size:420px;color:#ffffff06;transform:translateY(${-t * 3 % 1000}px)">${num}</div>`;
+}
+function chrome(t, si, lt) {
+  const segs = SCENES.map((s, i) => {
+    const k = i < si ? 1 : i > si ? 0 : cl(lt / s.d);
+    return `<div style="flex:1;height:4px;border-radius:2px;background:#ffffff22;overflow:hidden"><div style="height:100%;width:${k * 100}%;background:${C.amber}"></div></div>`;
+  }).join('');
+  return `
+  <div style="position:absolute;left:56px;right:56px;top:96px;display:flex;gap:6px;">${segs}</div>
+  <div class="mono" style="position:absolute;left:56px;right:56px;top:1010px;display:flex;justify-content:space-between;font-size:13px;color:${C.dim};">
+    <span>Entenda o caso</span><span>UFMG · MPF · 2025–2026</span></div>`;
+}
+
+const stage = document.getElementById('stage');
+window.render = t => {
+  let si = SCENES.findIndex(s => t < s.t0 + s.d); if (si < 0) si = SCENES.length - 1;
+  const s = SCENES[si], lt = t - s.t0;
+  const out = si < SCENES.length - 1 ? eo3(P(lt, s.d - .35, s.d)) : P(t, TOTAL - .6, TOTAL);
+  const sceneHTML = `<div style="position:absolute;inset:0;opacity:${1 - out};transform:translateY(${-30 * out}px)">${s.f(lt)}</div>`;
+  const fadeIn = P(t, 0, .4);
+  stage.innerHTML = `<div style="position:absolute;inset:0;opacity:${si === SCENES.length - 1 ? 1 - P(t, TOTAL - .6, TOTAL) : fadeIn}">${background(t, si)}${chrome(t, si, lt)}${sceneHTML}</div>`;
+};
+window.ready = document.fonts.ready.then(() => { window.render(0); return TOTAL; });
+</script>
+</body>
+</html>
