@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>HyperFrames vs Remotion</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 720px; height: 1280px; overflow: hidden; background: #0A0A0D; font-family: 'Inter Display', 'Inter', sans-serif; color: #F4F1EA; -webkit-font-smoothing: antialiased; }
+#stage { position: absolute; inset: 0; overflow: hidden; }
+.a { position: absolute; left: 56px; right: 56px; }
+.mono { font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .16em; font-weight: 600; }
+.code { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+.w { display: inline-block; transform-origin: 0 70%; will-change: transform; }
+.h1 { font-weight: 800; letter-spacing: -.035em; line-height: 1; }
+.p { font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.36; color: #B9B5AC; }
+.lbl { font-size: 16px; display: flex; align-items: center; gap: 12px; }
+.lbl i { display: inline-block; height: 2px; background: currentColor; }
+.chip { display: inline-block; font-size: 27px; font-weight: 600; letter-spacing: -.01em; padding: 12px 21px; border-radius: 999px; white-space: nowrap; transform-origin: 50% 50%; }
+.cell { position: absolute; width: 296px; height: 62px; border-radius: 16px; display: flex; align-items: center; padding: 0 20px; font-size: 25px; font-weight: 650; letter-spacing: -.012em; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+const C = { bg: '#0A0A0D', ink: '#F4F1EA', mute: '#B9B5AC', dim: '#7C7A75', line: '#26262E', card: '#14141A',
+            hf: '#D4F24A', rm: '#4C8DFF', cc: '#F08A5D' };
+const W = 720, H = 1280;
+const SCENES = [0, 6, 14, 22, 30, 36];           // início de cada cena (s) — cortes nos compassos (120 bpm)
+const TOTAL = 36;
+
+// ---------- math ----------
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const P = (t, a, b) => cl((t - a) / (b - a));
+const eo3 = x => 1 - Math.pow(1 - x, 3);
+const eo5 = x => 1 - Math.pow(1 - x, 5);
+const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const eback = x => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+
+// ---------- helpers ----------
+const rv = (lt, t0, d = .55, dy = 26) => { const k = eo3(P(lt, t0, t0 + d)); return `opacity:${k};transform:translateY(${(1 - k) * dy}px)`; };
+const sx = (lt, t0, dx, d = .6) => { const k = eo5(P(lt, t0, t0 + d)); return `opacity:${cl(k * 1.4)};transform:translateX(${(1 - k) * dx}px)`; };
+const pop = (lt, t0, d = .5) => { const p = P(lt, t0, t0 + d); return `opacity:${cl(p * 3)};transform:scale(${.55 + .45 * eback(p)})`; };
+// palavras "batendo" na tela; *destaque* usa a cor de acento
+function slam(text, lt, t0, step, col) {
+  let out = '', i = 0;
+  for (let w of text.split(' ')) {
+    if (w === '/') { out += '<br>'; continue; }
+    const hl = w.startsWith('*'); w = w.replace(/\*/g, '');
+    const p = P(lt, t0 + i * step, t0 + i * step + .42), k = eo5(p);
+    out += `<span class="w" style="${hl ? `color:${col};` : ''}opacity:${cl(p * 2.5)};transform:translateY(${(1 - k) * 46}px) scale(${1 + (1 - k) * .16})">${w}</span> `;
+    i++;
+  }
+  return out;
+}
+const label = (txt, lt, col, t0 = .15) => `<div class="a lbl mono" style="top:226px;color:${col};${rv(lt, t0, .5, 10)}"><i style="width:${28 * eo3(P(lt, t0, t0 + .6))}px"></i>${txt}</div>`;
+const check = (k, col) => `<svg width="24" height="24" viewBox="0 0 24 24"><path d="M5 12.5 L10 17.5 L19.5 7" fill="none" stroke="${col}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24" stroke-dashoffset="${24 * (1 - k)}"/></svg>`;
+
+// ---------- fundo ----------
+function bg(t, cols) {
+  const dx = Math.sin(t * .35) * 50, dy = Math.cos(t * .28) * 40;
+  let g = '';
+  cols.forEach((c, i) => {
+    const x = i ? 560 - dx : 150 + dx, y = i ? 1010 + dy : 260 - dy;
+    g += `<div style="position:absolute;left:${x - 430}px;top:${y - 430}px;width:860px;height:860px;border-radius:50%;background:radial-gradient(circle,${rgba(c, .2)} 0%,${rgba(c, .07)} 38%,transparent 68%)"></div>`;
+  });
+  return `<div style="position:absolute;inset:0;background:${C.bg}"></div>${g}
+  <div style="position:absolute;inset:0;background-image:radial-gradient(${rgba(C.ink, .09)} 1.2px,transparent 1.3px);background-size:36px 36px;background-position:${(t * 5) % 36}px ${(t * 7) % 36}px"></div>`;
+}
+// barra de progresso por cena (estilo "stories")
+function progress(t) {
+  let h = `<div class="a" style="top:196px;display:flex;gap:8px">`;
+  for (let i = 0; i < 5; i++) {
+    const k = P(t, SCENES[i], SCENES[i + 1]);
+    h += `<div style="flex:1;height:4px;border-radius:2px;background:${rgba(C.ink, .16)};overflow:hidden"><div style="width:${k * 100}%;height:100%;background:${C.ink}"></div></div>`;
+  }
+  return h + '</div>';
+}
+// cortina de cor entre cenas
+const WIPES = [[6, C.hf], [14, C.rm], [22, C.ink], [30, C.cc]];
+function wipes(t) {
+  let h = '';
+  for (const [ct, col] of WIPES) {
+    const p = P(t, ct - .42, ct + .42);
+    if (p <= 0 || p >= 1) continue;
+    const y1 = (1 - 2 * eio(p)) * (H + 40);
+    const y2 = (1 - 2 * eio(cl(p * 1.12 - .12))) * (H + 40);
+    h += `<div style="position:absolute;left:0;top:${y2}px;width:${W}px;height:${H + 40}px;background:${rgba(col, .35)}"></div>`;
+    h += `<div style="position:absolute;left:0;top:${y1}px;width:${W}px;height:${H + 40}px;background:${col}"></div>`;
+  }
+  return h;
+}
+
+// ---------- CENA 1 · gancho ----------
+function s1(lt) {
+  let h = bg(lt, [C.hf, C.rm]);
+  // A: a pergunta
+  const out = eio(P(lt, 2.25, 2.75));
+  if (out < 1) {
+    h += `<div style="position:absolute;inset:0;opacity:${1 - out};transform:translateY(${-out * 70}px)">`;
+    h += label('Para editar vídeos com Claude', lt, C.cc);
+    h += `<div class="a h1" style="top:300px;font-size:104px;line-height:1.02">${slam('Qual / ferramenta / *escolher?*', lt, .35, .28, C.cc)}</div>`;
+    h += `<div class="a p" style="top:660px;font-size:32px;${rv(lt, 1.35)}">Duas opções. Cada uma<br>resolve uma coisa.</div>`;
+    h += '</div>';
+  }
+  // B: as duas opções
+  const b = lt - 2.6;
+  if (b > 0) {
+    const k1 = eo5(P(b, 0, .7)), k2 = eo5(P(b, .22, .92));
+    const panel = (top, col, k, dir, name, tag, ink) => `
+      <div style="position:absolute;left:56px;top:${top}px;width:608px;height:236px;border-radius:30px;background:${col};color:${ink};opacity:${cl(k * 1.5)};transform:translateX(${(1 - k) * dir * 700}px);padding:34px 36px;display:flex;flex-direction:column;justify-content:space-between">
+        <div class="mono" style="font-size:16px;opacity:${.75 * eo3(P(b, .9, 1.4))}">${tag}</div>
+        <div style="font-size:80px;font-weight:800;letter-spacing:-.04em;line-height:1">${name}</div>
+      </div>`;
+    h += label('Editar vídeos com Claude', b, C.mute, .1);
+    h += panel(300, C.hf, k1, -1, 'HyperFrames', 'Opção 1', '#0A0A0D');
+    h += panel(576, C.rm, k2, 1, 'Remotion', 'Opção 2', '#060A14');
+    h += `<div style="position:absolute;left:${360 - 46}px;top:${556 - 46}px;width:92px;height:92px;border-radius:50%;background:${C.bg};border:3px solid ${C.ink};display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;letter-spacing:-.02em;${pop(b, .8)}">ou</div>`;
+    h += `<div class="a" style="top:872px;font-size:36px;font-weight:650;letter-spacing:-.02em;line-height:1.22;${rv(b, 1.5)}">Os dois criam vídeo com código.<br><span style="color:${C.mute}">Mas resolvem necessidades</span> <span style="color:${C.cc}">diferentes.</span></div>`;
+  }
+  return h;
+}
+
+// ---------- CENA 2 · HyperFrames ----------
+function s2(lt) {
+  let h = bg(lt + 6, [C.hf]);
+  h += label('01 · HyperFrames', lt, C.hf);
+  h += `<div class="a h1" style="top:264px;font-size:104px">${slam('Criar / *rápido.*', lt, .4, .26, C.hf)}</div>`;
+  h += `<div class="a p" style="top:496px;font-size:28px;${rv(lt, 1.0)}">Você descreve. O Claude escreve<br>em HTML. Sai um vídeo pronto.</div>`;
+
+  // código → vídeo
+  const lines = [
+    ['<span style="color:#7C7A75">&lt;</span><span style="color:#D4F24A">div</span> class=<span style="color:#F08A5D">"cena"</span><span style="color:#7C7A75">&gt;</span>', 18],
+    ['  <span style="color:#7C7A75">&lt;</span><span style="color:#D4F24A">h1</span><span style="color:#7C7A75">&gt;</span>Seu reel<span style="color:#7C7A75">&lt;/</span><span style="color:#D4F24A">h1</span><span style="color:#7C7A75">&gt;</span>', 19],
+    ['  <span style="color:#7C7A75">&lt;</span><span style="color:#D4F24A">p</span><span style="color:#7C7A75">&gt;</span>em minutos<span style="color:#7C7A75">&lt;/</span><span style="color:#D4F24A">p</span><span style="color:#7C7A75">&gt;</span>', 19],
+    ['<span style="color:#7C7A75">&lt;/</span><span style="color:#D4F24A">div</span><span style="color:#7C7A75">&gt;</span>', 6],
+  ];
+  const tot = lines.reduce((s, l) => s + l[1], 0);
+  let typed = Math.floor(P(lt, 1.6, 3.3) * tot), code = '';
+  for (const [html, n] of lines) {
+    const c = cl(typed, 0, n); typed -= c;
+    code += `<div style="white-space:pre;overflow:hidden;width:${c}ch;height:30px">${html}</div>`;
+  }
+  const done = eo3(P(lt, 3.35, 3.75));
+  h += `<div style="position:absolute;left:56px;top:606px;width:384px;height:236px;border-radius:22px;background:${C.card};border:1.5px solid ${C.line};padding:18px 22px;${rv(lt, 1.3, .6, 30)}">
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:16px">
+      <i style="width:10px;height:10px;border-radius:50%;background:#3A3A44"></i><i style="width:10px;height:10px;border-radius:50%;background:#3A3A44"></i><i style="width:10px;height:10px;border-radius:50%;background:#3A3A44"></i>
+      <span class="code" style="font-size:13px;color:${C.dim};margin-left:8px">index.html</span>
+    </div>
+    <div class="code" style="font-size:17px;color:${C.ink}">${code}</div>
+    <div class="code" style="position:absolute;left:22px;bottom:18px;font-size:14px;color:${C.hf};opacity:${done}">✓ render → video.mp4</div>
+  </div>`;
+  // seta
+  const ak = eo3(P(lt, 3.3, 3.75));
+  h += `<svg style="position:absolute;left:452px;top:706px" width="52" height="36" viewBox="0 0 52 36"><path d="M4 18 H44 M32 6 L45 18 L32 30" fill="none" stroke="${C.hf}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="80" stroke-dashoffset="${80 * (1 - ak)}"/></svg>`;
+  // mini vídeo 9:16
+  const v = lt - 3.6, vk = eo5(P(v, 0, .6)), loop = ((v % 2) + 2) % 2;
+  const tk = eback(P(loop, .05, .5)), fk = 1 - P(loop, 1.75, 2);
+  h += `<div style="position:absolute;left:516px;top:592px;width:148px;height:264px;border-radius:20px;background:linear-gradient(160deg,#1C2110,#0E0E12);border:2px solid ${C.hf};overflow:hidden;opacity:${cl(vk * 1.5)};transform:scale(${.8 + .2 * vk})">
+    <div style="position:absolute;left:${74 - 46}px;top:38px;width:92px;height:92px;border-radius:50%;background:${C.hf};opacity:${fk};transform:scale(${.2 + .8 * tk})"></div>
+    <div style="position:absolute;left:0;right:0;top:148px;text-align:center;font-size:24px;font-weight:800;letter-spacing:-.03em;opacity:${fk * P(loop, .3, .6)};transform:translateY(${(1 - eo3(P(loop, .3, .8))) * 14}px)">Seu reel</div>
+    <div class="mono" style="position:absolute;left:0;right:0;top:182px;text-align:center;font-size:9px;color:${C.hf};opacity:${fk * P(loop, .6, .9)}">em minutos</div>
+    <div style="position:absolute;left:14px;right:14px;bottom:16px;height:4px;border-radius:2px;background:${rgba(C.ink, .2)}"><div style="width:${P(v, .3, 4.3) * 100}%;height:100%;border-radius:2px;background:${C.hf}"></div></div>
+  </div>`;
+
+  // ideal para
+  h += `<div class="a mono" style="top:884px;font-size:14px;color:${C.dim};${rv(lt, 4.0, .4, 8)}">Ideal para</div>`;
+  const chips = ['Vídeos animados', 'Apresentações', 'Posts', 'Reels', 'Páginas web em vídeo'];
+  h += `<div style="position:absolute;left:56px;top:916px;width:600px;display:flex;flex-wrap:wrap;gap:11px 10px">`;
+  chips.forEach((c, i) => { h += `<span class="chip" style="font-size:25px;padding:10px 18px;color:${C.hf};background:${rgba(C.hf, .1)};border:1.5px solid ${rgba(C.hf, .5)};${pop(lt, 4.2 + i * .32)}">${c}</span>`; });
+  h += '</div>';
+  return h;
+}
+
+// ---------- CENA 3 · Remotion ----------
+function s3(lt) {
+  let h = bg(lt + 14, [C.rm]);
+  h += label('02 · Remotion', lt, C.rm);
+  h += `<div class="a h1" style="top:264px;font-size:104px">${slam('Produzir / *sempre.*', lt, .4, .26, C.rm)}</div>`;
+  h += `<div class="a p" style="top:496px;font-size:28px;${rv(lt, 1.0)}">Mais robusto: o vídeo vira um template<br>em React, alimentado por dados.</div>`;
+
+  // template → variações
+  h += `<div style="position:absolute;left:56px;top:606px;width:176px;height:236px;border-radius:22px;background:${C.card};border:2px solid ${C.rm};padding:18px;${rv(lt, 1.3, .6, 30)}">
+    <div class="mono" style="font-size:12px;color:${C.rm}">Template</div>
+    <div style="margin-top:18px;height:74px;border-radius:12px;background:${rgba(C.rm, .16)};border:1.5px dashed ${rgba(C.rm, .6)};display:flex;align-items:center;justify-content:center"><span class="code" style="font-size:16px;color:${C.ink}">{nome}</span></div>
+    <div style="margin-top:14px;height:36px;border-radius:10px;background:${rgba(C.ink, .06)};border:1.5px dashed ${rgba(C.ink, .25)};display:flex;align-items:center;justify-content:center"><span class="code" style="font-size:14px;color:${C.mute}">{valor}</span></div>
+    <div style="margin-top:14px;height:6px;width:70%;border-radius:3px;background:${rgba(C.ink, .14)}"></div>
+    <div style="margin-top:8px;height:6px;width:45%;border-radius:3px;background:${rgba(C.ink, .14)}"></div>
+  </div>`;
+  const ak = eo3(P(lt, 2.0, 2.45));
+  h += `<svg style="position:absolute;left:240px;top:706px" width="36" height="36" viewBox="0 0 36 36"><path d="M3 18 H29 M19 7 L30 18 L19 29" fill="none" stroke="${C.rm}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="64" stroke-dashoffset="${64 * (1 - ak)}"/></svg>`;
+  const data = [['Ana', 82], ['Bia', 64], ['Caio', 91], ['Duda', 47], ['Enzo', 73], ['Fabi', 58]];
+  data.forEach(([n, v], i) => {
+    const x = 286 + (i % 3) * 129, y = 606 + Math.floor(i / 3) * 122, t0 = 2.3 + i * .22;
+    const bk = eo3(P(lt, t0 + .25, t0 + .9));
+    h += `<div style="position:absolute;left:${x}px;top:${y}px;width:120px;height:114px;border-radius:16px;background:${C.card};border:1.5px solid ${rgba(C.rm, .45)};padding:13px 13px;${pop(lt, t0, .45)}">
+      <div style="font-size:21px;font-weight:750;letter-spacing:-.02em">${n}</div>
+      <div class="code" style="font-size:13px;color:${C.rm};margin-top:5px">${Math.round(v * bk)}%</div>
+      <div style="position:absolute;left:13px;right:13px;bottom:14px;height:7px;border-radius:4px;background:${rgba(C.ink, .12)}"><div style="width:${v * bk}%;height:100%;border-radius:4px;background:${C.rm}"></div></div>
+    </div>`;
+  });
+  const n = Math.round(1 + eio(P(lt, 2.4, 5.2)) * 99);
+  h += `<div class="a mono" style="top:860px;font-size:15px;color:${C.mute};${rv(lt, 2.4, .4, 8)}">1 template <span style="color:${C.rm}">→ ${n} vídeo${n > 1 ? 's' : ''}</span></div>`;
+
+  // pontos fortes
+  ['Templates reutilizáveis', 'Dados dinâmicos', 'Produção recorrente'].forEach((txt, i) => {
+    const t0 = 4.3 + i * .5, k = eo3(P(lt, t0 + .15, t0 + .55));
+    h += `<div style="position:absolute;left:56px;top:${900 + i * 50}px;display:flex;align-items:center;gap:15px;${sx(lt, t0, -40)}">
+      <div style="width:36px;height:36px;border-radius:11px;background:${rgba(C.rm, .18)};border:1.5px solid ${rgba(C.rm, .6)};display:flex;align-items:center;justify-content:center">${check(k, C.rm)}</div>
+      <div style="font-size:29px;font-weight:650;letter-spacing:-.015em">${txt}</div>
+    </div>`;
+  });
+  return h;
+}
+
+// ---------- CENA 4 · lado a lado ----------
+function s4(lt) {
+  let h = bg(lt + 22, [C.hf, C.rm]);
+  h += label('Resumo', lt, C.mute);
+  h += `<div class="a h1" style="top:264px;font-size:88px">${slam('Qual é o / seu caso?', lt, .4, .16, C.ink)}</div>`;
+  const hk1 = eo5(P(lt, 1.0, 1.6)), hk2 = eo5(P(lt, 1.12, 1.72));
+  const head = (x, col, k, name, ink) => `<div style="position:absolute;left:${x}px;top:478px;width:296px;height:70px;border-radius:18px;background:${col};color:${ink};display:flex;align-items:center;padding:0 20px;font-size:31px;font-weight:800;letter-spacing:-.03em;opacity:${cl(k * 1.5)};transform:translateY(${(1 - k) * 30}px)">${name}</div>`;
+  h += head(56, C.hf, hk1, 'HyperFrames', '#0A0A0D') + head(368, C.rm, hk2, 'Remotion', '#060A14');
+  const rows = [
+    ['Você quer', 'Velocidade', 'Escala'],
+    ['Melhor uso', 'Reels, posts, demos', 'Templates e séries'],
+    ['O Claude escreve', 'HTML, CSS e JS', 'React + TypeScript'],
+    ['Ritmo', 'Vídeo pontual', 'Produção recorrente'],
+  ];
+  rows.forEach(([k, a, b], i) => {
+    const y = 572 + i * 110, t0 = 1.7 + i * .85;
+    h += `<div class="a mono" style="top:${y}px;font-size:13px;color:${C.dim};display:flex;align-items:center;gap:12px;${rv(lt, t0, .4, 8)}">${k}<i style="flex:1;height:1px;background:${C.line}"></i></div>`;
+    h += `<div class="cell" style="left:56px;top:${y + 28}px;background:${rgba(C.hf, .1)};border:1.5px solid ${rgba(C.hf, .4)};color:${C.hf};${sx(lt, t0 + .1, -60)}">${a}</div>`;
+    h += `<div class="cell" style="left:368px;top:${y + 28}px;background:${rgba(C.rm, .12)};border:1.5px solid ${rgba(C.rm, .45)};color:#8FB6FF;${sx(lt, t0 + .22, 60)}">${b}</div>`;
+  });
+  return h;
+}
+
+// ---------- CENA 5 · fechamento ----------
+function s5(lt) {
+  let h = bg(lt + 30, [C.cc, C.rm]);
+  h += label('Conclusão', lt, C.cc);
+  h += `<div class="a h1" style="top:264px;font-size:78px;line-height:1.04">${slam('Os dois / funcionam / muito bem com / *Claude* *Code.*', lt, .4, .13, C.cc)}</div>`;
+  h += `<div class="a" style="top:610px;font-size:36px;font-weight:600;letter-spacing:-.02em;color:${C.mute};${rv(lt, 1.7)}">Só resolvem necessidades <span style="color:${C.ink}">diferentes.</span></div>`;
+  const pill = (y, col, t0, a, b) => `<div style="position:absolute;left:56px;top:${y}px;width:608px;height:84px;border-radius:24px;background:${C.card};border:1.5px solid ${rgba(col, .55)};display:flex;align-items:center;padding:0 26px;gap:16px;${sx(lt, t0, -70)}">
+      <i style="width:16px;height:16px;border-radius:50%;background:${col};flex:none"></i>
+      <span style="font-size:25px;font-weight:600;letter-spacing:-.015em;color:${C.mute};white-space:nowrap">${a}</span>
+      <span style="font-size:26px;color:${C.dim}">→</span>
+      <span style="font-size:31px;font-weight:800;letter-spacing:-.03em;color:${col}">${b}</span>
+    </div>`;
+  h += pill(726, C.hf, 2.5, 'Vídeo novo a cada vez', 'HyperFrames');
+  h += pill(824, C.rm, 2.9, 'Mesmo formato, em escala', 'Remotion');
+  const pulse = 1 + .035 * Math.sin(Math.max(0, lt - 4.2) * Math.PI * 2);
+  h += `<div class="a" style="top:948px;${rv(lt, 3.7, .5, 18)}"><div style="display:inline-flex;align-items:center;gap:13px;transform:scale(${pulse});transform-origin:0 50%">
+      <svg width="26" height="32" viewBox="0 0 26 32"><path d="M4 3 H22 V28 L13 21 L4 28 Z" fill="${C.ink}" stroke="${C.ink}" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      <span class="mono" style="font-size:18px;color:${C.ink}">Salve para consultar depois</span>
+    </div></div>`;
+  return h;
+}
+
+// ---------- render ----------
+const FNS = [s1, s2, s3, s4, s5];
+const stage = document.getElementById('stage');
+window.render = t => {
+  t = cl(t, 0, TOTAL - 1e-4);
+  let i = 0; while (i < 4 && t >= SCENES[i + 1]) i++;
+  stage.innerHTML = FNS[i](t - SCENES[i]) + progress(t) + wipes(t);
+};
+window.ready = document.fonts.ready.then(() => Promise.all([
+  document.fonts.load('800 80px "Inter Display"'), document.fonts.load('600 20px "Inter Display"'),
+  document.fonts.load('400 20px Inter'), document.fonts.load('600 16px "JetBrains Mono"'), document.fonts.load('500 16px "JetBrains Mono"'),
+])).then(() => { window.render(0); return TOTAL; });
+// pré-visualização no navegador: ?play
+if (location.search.includes('play')) window.ready.then(() => { const t0 = performance.now(); (function f() { window.render(((performance.now() - t0) / 1000) % TOTAL); requestAnimationFrame(f); })(); });
+</script>
+</body>
+</html>
